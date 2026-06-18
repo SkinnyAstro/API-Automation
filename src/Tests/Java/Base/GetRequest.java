@@ -1,10 +1,9 @@
-package Base;
+package Java.Base;
 import io.restassured.RestAssured;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import static io.restassured.RestAssured.given;
-import static io.restassured.RestAssured.when;
 
 
 public class GetRequest {
