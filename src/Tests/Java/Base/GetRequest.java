@@ -3,6 +3,7 @@ import io.restassured.RestAssured;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
+import static io.restassured.RestAssured.basePath;
 import static io.restassured.RestAssured.given;
 
 
@@ -12,23 +13,24 @@ public class GetRequest {
 
     @BeforeClass
     public  static void Setup(){
-        RestAssured.baseURI = "https://gorest.co.in";
-        RestAssured.basePath = "/public";
-
+        RestAssured.baseURI = "https://stage-dev.truemedsapi.in";
+        RestAssured.basePath = "/CustomerService";
     }
 
 
    @Test
     public void StatusCode(){
         given()
-                .header("Bearer","8dd257c7bd81cac870732d4ca9c75d90445cd0e3b380754aa0fdf7e38d0e912f")
+                .header("Authorization","Bearer " + token)
                 .header("Accept","application/json")
                 .param("orderId","1868899")
                 .param("customerId","")
                 .when()
-               .get("/v2/users")
+               .get("/fetchOrderStatusDetails")
        .then()
-                .statusCode(200);
+                .statusCode(200)
+                .log().all();
+
 
     }
 }
