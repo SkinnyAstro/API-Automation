@@ -10,7 +10,7 @@ import static io.restassured.RestAssured.given;
 
 public class GetRequest {
 
-    String token = "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI1NDExMyIsImVudGl0eVR5cGUiOiJJRCIsInJvbGVMaXN0IjpbIlJPTEVfQ1VTVE9NRVIiXSwiaXNzIjoiY29tLnRydWVtZWRzLmF1dGhfc2VydmljZSIsImV4cCI6MTc4MTkzMTcwNywiaWF0IjoxNzgxODQ1MzA3fQ.rqouqo0UI31EMSR8wogjftsDDJDHPbLT68GHmiEYIKEoES-E7rh9ERK5fJbcpNhIygUmz4K9qmS0VAodxwqH1L_vTXuRWLY5QSDEq_3QSYAKsNmZes5fPnUqvkeEqz8T7sqSPR9-LQciDooZStreOgNMp6AIatsddVufqaNx9e3cNQh-HVIbsQ_6vtjHT1m0yIHsLyO_WbUdOiUi0pQUgDvBwWFiPtli_2bSrw3Jg3YnHaOxI8BFZRQ8iosVJIoJCzD42oomvbLhr7mq6a15x8k2yBmiU5uSK2N6iAEVuaf5CdwOpMxry6r87-H0FyOYIej0CVky4zovH5ZOX-K3wg";
+    String token ="eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI1NDExMyIsImVudGl0eVR5cGUiOiJJRCIsInJvbGVMaXN0IjpbIlJPTEVfQ1VTVE9NRVIiXSwiaXNzIjoiY29tLnRydWVtZWRzLmF1dGhfc2VydmljZSIsImV4cCI6MTc4MjAxODg0OCwiaWF0IjoxNzgxOTMyNDQ4fQ.eQtiTZj5vpBZXV1rj7rMWgN85oBCQempJTSLNe5CVT7cp1ssNJFtgYR9-fnyY1CkxiXC1n-crC2Tye4ffCjahxG_Tsk13Tyj1uM2QFdG3FQ_fuuCbOx-vk2XXtrbaCLu3dQJAmqwjCBCIaguI_z91CeyK6hqeB_-FFeh9GMTyhkFGxD6lbVI_2C4R3gC2q4H7zSmGUZrVviZ4u03D2KiL4I1Bz0UXigEIjyFvrMcg7s_gMpkNHXnP67tSgd5KR1-7BWrOZZLwFmhFyvfdlWsCrsoTcf5Ofdzh3JlUrEuOGmOylehD2jTQUoy6BR5V8bI-M0eXOVI7M9eqjDkJoS5Gw";
 
     @BeforeClass
     public  static void Setup(){
@@ -44,8 +44,10 @@ public class GetRequest {
                 .when()
                 .get("/fetchOrderStatusDetails");
 
+
+
         //System.out.println(res.asString());
-        res.prettyPrint();
+        //res.prettyPrint();
 
     }
 }
