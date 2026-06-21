@@ -1,15 +1,22 @@
 package Java.Base;
 
+import Models.Addaddress;
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
+import org.checkerframework.checker.units.qual.A;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.notNullValue;
 
 public class PostRequest {
-    String token = "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI1NDExMyIsImVudGl0eVR5cGUiOiJJRCIsInJvbGVMaXN0IjpbIlJPTEVfQ1VTVE9NRVIiXSwiaXNzIjoiY29tLnRydWVtZWRzLmF1dGhfc2VydmljZSIsImV4cCI6MTc4MjAxODg0OCwiaWF0IjoxNzgxOTMyNDQ4fQ.eQtiTZj5vpBZXV1rj7rMWgN85oBCQempJTSLNe5CVT7cp1ssNJFtgYR9-fnyY1CkxiXC1n-crC2Tye4ffCjahxG_Tsk13Tyj1uM2QFdG3FQ_fuuCbOx-vk2XXtrbaCLu3dQJAmqwjCBCIaguI_z91CeyK6hqeB_-FFeh9GMTyhkFGxD6lbVI_2C4R3gC2q4H7zSmGUZrVviZ4u03D2KiL4I1Bz0UXigEIjyFvrMcg7s_gMpkNHXnP67tSgd5KR1-7BWrOZZLwFmhFyvfdlWsCrsoTcf5Ofdzh3JlUrEuOGmOylehD2jTQUoy6BR5V8bI-M0eXOVI7M9eqjDkJoS5Gw";
+    String token = "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI1NDExMyIsImVudGl0eVR5cGUiOiJJRCIsInJvbGVMaXN0IjpbIlJPTEV" +
+            "fQ1VTVE9NRVIiXSwiaXNzIjoiY29tLnRydWVtZWRzLmF1dGhfc2VydmljZSIsImV4cCI6MTc4MjEyMjExNiwiaWF0IjoxNzgyMDM1NzE2fQ.f2WyM" +
+            "O47YtLQotNWWeptoMe61daHoxfLI76gxX2Nd7Z6LIrGhpp4tzjpDmBTmkn2gq7P8647-C03T0-3VJO7eBgR-H0wO2eK37Knbdf-" +
+            "Aae-pN4vzFcPppY6x-n7ZR6J_9to0IFxOo9p64VVc7bchk0VJSXhQJAiMLu1sBOstGiFppJjH7Oz8OjDAy74TAF2COB2KrLi0QNLt1UO1z0WPFx37PUs6N1U2pyS" +
+            "TLfqf5U0qQcuk0JcbGH2eVYVSQR3bBFJP1tGKHYZ1CcdfrV3ZGytzxbRn0hoQaPkUZst81ldjqufCBI1jvOtEnlHierL2GztxJ9kxgkatet8Esy4ew";
 
 
     @BeforeClass // basically I will execute these block of code before every test
@@ -20,36 +27,33 @@ public class PostRequest {
 
     @Test
     public void AddingAddress() {
+
+        // Created a POJO class to store the data and creating an object of that class
+        Addaddress address = new Addaddress();
+        address.setAddressline1("A/701 Nakshatra");
+        address.setAddressline2("Test address");
+        address.setCityName("Kalyan");
+        address.setPincode(421301);
+        address.setRecalcLocation(false);
+        address.setLandmark("Axis Bank");
+        address.setAddresstype("Home");
+
         Response res =
                 given()
                         .header("Authorization", "Bearer " + token)
                         .header("Accept", "application/json") // this line means in what format we accept the data
                         .contentType("application/json") // It means we are sending the JSON type of data to the server
                         .queryParam("customerId", 54113)
-                        .body("{\n" +
-                                "    \"addressId\": null,\n" +
-                                "    \"addressType\": \"Home\",\n" +
-                                "    \"addressline1\": \"Test ADDRESS\",\n" +
-                                "    \"addressline2\": \"Karnik road\",\n" +
-                                "    \"cityName\": \"Mumbai\",\n" +
-                                "    \"landmark\": \"\",\n" +
-                                "    \"pincode\": \"421301\",\n" +
-                                "    \"stateName\": \"MAHARASHTRA\",\n" +
-                                "    \"receiverName\": \"\",\n" +
-                                "    \"receiverMobileNo\": \"8850843264\",\n" +
-                                "    \"receiverFirstName\": \"Pregabalinn\",\n" +
-                                "    \"receiverLastName\": \"\",\n" +
-                                "    \"latitude\": null,\n" +
-                                "    \"longitude\": null,\n" +
-                                "    \"placeId\": null,\n" +
-                                "    \"recalcLocation\": true\n" +
-                                "}")
+                        .body(address)
                         .when()
                         .post("/v1/saveAddress")
                         .then()
                         .statusCode(200)
+                        .body("responseData.addressId",notNullValue())
                         .extract().response();
-                res.prettyPrint();
+        res.prettyPrint();
+
+
 
     }
 }
