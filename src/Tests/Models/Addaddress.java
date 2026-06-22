@@ -2,7 +2,7 @@ package Models;
 
 public class Addaddress {
 
-    private int addressId;
+    private Integer addressId;
     private String addressType;
     private String addressline1;
     private String addressline2;
@@ -10,12 +10,12 @@ public class Addaddress {
     private String landmark;
     private int pincode;
 
-    public int getAddressid() {
+    public Integer getAddressId() {
         return addressId;
     }
 
-    public void setAddressid(int addressid) {
-        this.addressId = addressid;
+    public void setAddressId(Integer addressId) {
+        this.addressId = addressId;
     }
 
     public String getAddresstype() {

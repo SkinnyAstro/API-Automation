@@ -2,6 +2,7 @@ package Java.Base;
 
 import Models.Patientdetails;
 import io.restassured.RestAssured;
+import io.restassured.path.json.JsonPath;
 import io.restassured.response.Response;
 import lombok.ToString;
 import org.testng.annotations.BeforeClass;
@@ -11,11 +12,12 @@ import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.notNullValue;
 
 public class PostRequestPatient {
-    String token = "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI1NDExMyIsImVudGl0eVR5cGUiOiJJRCIsInJvbGVMaXN0IjpbIlJPTEV" +
-            "fQ1VTVE9NRVIiXSwiaXNzIjoiY29tLnRydWVtZWRzLmF1dGhfc2VydmljZSIsImV4cCI6MTc4MjEyMjExNiwiaWF0IjoxNzgyMDM1NzE2fQ.f2WyM" +
-            "O47YtLQotNWWeptoMe61daHoxfLI76gxX2Nd7Z6LIrGhpp4tzjpDmBTmkn2gq7P8647-C03T0-3VJO7eBgR-H0wO2eK37Knbdf-" +
-            "Aae-pN4vzFcPppY6x-n7ZR6J_9to0IFxOo9p64VVc7bchk0VJSXhQJAiMLu1sBOstGiFppJjH7Oz8OjDAy74TAF2COB2KrLi0QNLt1UO1z0WPFx37PUs6N1U2pyS" +
-            "TLfqf5U0qQcuk0JcbGH2eVYVSQR3bBFJP1tGKHYZ1CcdfrV3ZGytzxbRn0hoQaPkUZst81ldjqufCBI1jvOtEnlHierL2GztxJ9kxgkatet8Esy4ew";
+    String token = "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI1NDExMyIsImVudGl0eVR5cGUiOiJJRCIsInJvbGVMaXN0I" +
+            "jpbIlJPTEVfQ1VTVE9NRVIiXSwiaXNzIjoiY29tLnRydWVtZWRzLmF1dGhfc2VydmljZSIsImV4cCI6MTc4MjIyMDY0NCwiaWF0IjoxNz" +
+            "gyMTM0MjQ0fQ.fMV8kMn2KnihNsldUS8utFiGQNktVwbqtv9J1z1xcGpRMxzP8MohRH_MvsnCxU9vvt9oZzHDCzTcKhpLQgwuNZG3gZvlkA4uQ" +
+            "AlizqE5o0Mv8t7jnO-zTypUmY-juEDf8YhIoxR8ZanfPcx1KEvlX8PskNMhG9ay-V-sNKOkyb49Qgyr9LRmcTxxQqDOOma6b9pr6decZG8SCKQjr" +
+            "0O4aB38BFYCjtoeeFa9EqvpIUSEw1Lwl4nSlbiRbPyMtgbGB8jGO7" +
+            "apjaEtyBLjxGzqGd5A5lYJKSvW_K817cXOs2ekm2heR3XVPOBnu7EkT3LCp-aKmw0nC_Ss553IrLkQIQ";
 
 
     @BeforeClass // basically I will execute these block of code before every test
@@ -24,7 +26,9 @@ public class PostRequestPatient {
         RestAssured.basePath = "/CustomerService";
     }
 
-    @Test
+    // Gender id for male is 8 and Gender id for female is 9
+
+    @Test(description = "Adding a male patient")
     public void addpatient(){
         Patientdetails details  = new Patientdetails();
         details.setAge(50);
@@ -51,4 +55,45 @@ public class PostRequestPatient {
         res.prettyPrint();
 
     }
+
+    @Test(description = "Adding female patient")
+    public void AddingFemalepatient(){
+        Patientdetails details  = new Patientdetails();
+        details.setAge(50);
+        details.setGender(9);
+        details.setFirstName("Sofia");
+        details.setLastName("Test");
+        details.setRelationId(8);
+
+        Response res =
+
+                given()
+                        .header("Authorization", "Bearer " + token)
+                        .header("Accept","application/json")
+                        .contentType("application/json")
+                        .queryParam("customerId",54113)
+                        .body(details)
+                        .when()
+                        .post("/v1/addPatient")
+                        .then()
+                        .statusCode(200)
+                        .body("responseData.patientId", notNullValue())
+                        .extract().response();
+
+        res.prettyPrint();
+        //int patientid = res.path("responseData.patientId");
+        //System.out.println(patientid);
+
+
+        // Converting the response object as a string
+        String responseString = res.asString();
+        System.out.println(responseString);
+        JsonPath json = new JsonPath(responseString);
+
+        int patientid = json.get("responseData.patientId");
+        System.out.println(patientid);
+
+    }
+
+
 }
