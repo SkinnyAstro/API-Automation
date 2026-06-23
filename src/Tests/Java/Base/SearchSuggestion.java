@@ -1,7 +1,9 @@
 package Java.Base;
 
+import Models.SearchData;
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
+import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -18,8 +20,11 @@ public class SearchSuggestion {
         RestAssured.basePath="/SearchService";
     }
 
-    @Test(description = "Verifying Search Result data")
-    public void SearchResultData(){
+    @Test(description = "Verifying Search Result data via Brand keyword")
+    public void BrandSearch(){
+
+        SearchData sd = new SearchData();
+        sd.setBrandName("Telma");
 
         Response res =
         given()
@@ -33,8 +38,40 @@ public class SearchSuggestion {
 
         List<String> skuNames = res.jsonPath().getList("responseData.productList.product.skuName");
         System.out.println(skuNames);
-        //res.prettyPrint();
 
+        String SearchKeyword = "Telma";
+
+        /*
+        For this type of for loop we assigning all the SkuName in the response the value of 'sku'
+        and after that we are converting the sku and the SearchKeyword in to lowercase and using the assert
+        statement we are cross checking whether the sku contains the keyword
+        */
+
+        for (String sku: skuNames){
+            Assert.assertTrue(sku.toLowerCase().contains(SearchKeyword.toLowerCase()),
+            "SKU does not contain the keyword" + SearchKeyword + ":" + sku );
+        }
+    }
+    
+    @Test(description = "Searching via Company name")
+    public void CompanyNameSearch(){
+        Response res =
+                given()
+                        .queryParam("searchString","Glenmark")
+                        .when()
+                        .get("/getSearchSuggestion")
+                        .then()
+                        .statusCode(200)
+                        .extract().response();
+        List<String> companyName = res.jsonPath().getList("responseData.productList.product.manufacturerName");
+        System.out.println(companyName);
+
+        String Searchkeyword = "Glenmark";
+
+        for (String sku : companyName){
+            Assert.assertTrue(sku.toLowerCase().contains(Searchkeyword.toLowerCase()),
+            "SKU does not contain the keyword " + Searchkeyword + ":" + sku);
+        }
     }
 
 }
