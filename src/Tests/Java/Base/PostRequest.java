@@ -38,7 +38,7 @@ public class PostRequest {
         address.setPincode(421301);
         address.setRecalcLocation(false);
         address.setLandmark("Axis Bank");
-        address.setAddresstype("Work");
+        address.setAddressType("Work");
 
         Response res =
                 given()

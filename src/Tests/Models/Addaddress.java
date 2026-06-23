@@ -18,12 +18,12 @@ public class Addaddress {
         this.addressId = addressId;
     }
 
-    public String getAddresstype() {
+    public String getAddressType() {
         return addressType;
     }
 
-    public void setAddresstype(String addresstype) {
-        this.addressType = addresstype;
+    public void setAddressType(String addressType) {
+        this.addressType = addressType;
     }
 
     public String getAddressline1() {

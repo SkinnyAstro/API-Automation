@@ -1,0 +1,19 @@
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+
+<suite name="API Automation Suite">
+
+    <test name="Address API Tests">
+
+        <classes>
+
+            <class name="Java.Base.AddressFlow"/>
+<!--            <class name="Java.Base.GetRequest"/>-->
+<!--            <class name="Java.Base.PostRequest"/>-->
+<!--            <class name="Java.Base.PostRequestPatient"/>-->
+<!--            <class name="Java.Base.ValidateResponse"/>-->
+
+        </classes>
+
+    </test>
+
+</suite>
