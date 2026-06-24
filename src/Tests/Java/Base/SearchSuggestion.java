@@ -14,6 +14,9 @@ import static org.hamcrest.Matchers.equalTo;
 
 public class SearchSuggestion {
 
+    String BrandName = "Telma";
+    String CompanyName = "Glenmark";
+
     @BeforeClass
     public void SetUp(){
         RestAssured.baseURI = "https://stage-dev.truemedsapi.in";
