@@ -1,6 +1,5 @@
 package Java.Base;
 
-import Models.SearchData;
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
 import org.testng.Assert;
@@ -26,12 +25,9 @@ public class SearchSuggestion {
     @Test(description = "Verifying Search Result data via Brand keyword")
     public void BrandSearch(){
 
-        SearchData sd = new SearchData();
-        sd.setBrandName("Telma");
-
         Response res =
         given()
-                .queryParam("searchString","Telma")
+                .queryParam("searchString",BrandName)
                 .when()
                 .get("/getSearchSuggestion")
                 .then()
@@ -42,7 +38,7 @@ public class SearchSuggestion {
         List<String> skuNames = res.jsonPath().getList("responseData.productList.product.skuName");
         System.out.println(skuNames);
 
-        String SearchKeyword = "Telma";
+        //String SearchKeyword = "Telma";
 
         /*
         For this type of for loop we assigning all the SkuName in the response the value of 'sku'
@@ -51,8 +47,8 @@ public class SearchSuggestion {
         */
 
         for (String sku: skuNames){
-            Assert.assertTrue(sku.toLowerCase().contains(SearchKeyword.toLowerCase()),
-            "SKU does not contain the keyword" + SearchKeyword + ":" + sku );
+            Assert.assertTrue(sku.toLowerCase().contains(BrandName.toLowerCase()),
+            "SKU does not contain the keyword" + BrandName + ":" + sku );
         }
     }
     
@@ -60,21 +56,38 @@ public class SearchSuggestion {
     public void CompanyNameSearch(){
         Response res =
                 given()
-                        .queryParam("searchString","Glenmark")
+                        .queryParam("searchString",CompanyName)
                         .when()
                         .get("/getSearchSuggestion")
                         .then()
                         .statusCode(200)
                         .extract().response();
-        List<String> companyName = res.jsonPath().getList("responseData.productList.product.manufacturerName");
-        System.out.println(companyName);
+        List<String> Names = res.jsonPath().getList("responseData.productList.product.manufacturerName");
+        System.out.println(Names);
 
-        String Searchkeyword = "Glenmark";
 
-        for (String sku : companyName){
-            Assert.assertTrue(sku.toLowerCase().contains(Searchkeyword.toLowerCase()),
-            "SKU does not contain the keyword " + Searchkeyword + ":" + sku);
+
+        for (String sku : Names){
+            Assert.assertTrue(sku.toLowerCase().contains(CompanyName.toLowerCase()),
+            "SKU does not contain the keyword " + CompanyName + ":" + sku);
         }
+    }
+
+    @Test(description = "MRP and Selling price should always be greater than 0")
+    public void VerifyMRPandSellingprice(){
+        Response res =
+                given()
+                        .queryParam("searchString",BrandName)
+                        .when()
+                        .get("/getSearchSuggestion")
+                        .then()
+                        .statusCode(200)
+                        .extract().response();
+
+        List<String>MRP = res.jsonPath().getList("responseData.productList.product.mrp");
+        System.out.println(MRP);
+
+
     }
 
 }
