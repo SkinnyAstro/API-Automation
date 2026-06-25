@@ -18,7 +18,7 @@ public class SearchSuggestion {
 
     @BeforeClass
     public void SetUp(){
-        RestAssured.baseURI = "https://stage-dev.truemedsapi.in";
+        RestAssured.baseURI = "https://stage-qa.truemedsapi.in";
         RestAssured.basePath="/SearchService";
     }
 
@@ -84,11 +84,20 @@ public class SearchSuggestion {
                         .statusCode(200)
                         .extract().response();
 
-        List<String>MRP = res.jsonPath().getList("responseData.productList.product.mrp");
+        List<Number>MRP = res.jsonPath().getList("responseData.productList.product.mrp");
         System.out.println(MRP);
 
+        for (Number mrp: MRP){
+           if (mrp.floatValue()>0){
+               System.out.println("Valid MRP is displayed");
+           }else {
+               System.out.println("Invalid MRP" + mrp);
+           }
+        }
 
+
+       }
 
     }
 
-}
+
