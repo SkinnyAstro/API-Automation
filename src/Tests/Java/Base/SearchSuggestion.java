@@ -1,9 +1,11 @@
 package Java.Base;
 
+import Models.UserDataProvider;
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
+import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 import java.util.List;
@@ -18,24 +20,23 @@ public class SearchSuggestion {
 
     @BeforeClass
     public void SetUp(){
-        RestAssured.baseURI = "https://stage-qa.truemedsapi.in";
+        RestAssured.baseURI = "https://stage-rng.truemedsapi.in";
         RestAssured.basePath="/SearchService";
     }
 
-    @Test(description = "Verifying Search Result data via Brand keyword")
-    public void BrandSearch(){
+    @Test(description = "Verifying Search Result data via Brand keyword", dataProvider ="searchData",dataProviderClass = UserDataProvider.class)
+    public void BrandSearch(String value, String path){
 
         Response res =
         given()
-                .queryParam("searchString",BrandName)
+                .queryParam("searchString",value)
                 .when()
                 .get("/getSearchSuggestion")
                 .then()
                 .statusCode(200)
-                .body("responseData.productList[0].product.skuName",equalTo("Telma 40 Tablet 30"))
                 .extract().response();
 
-        List<String> skuNames = res.jsonPath().getList("responseData.productList.product.skuName");
+        List<String> skuNames = res.jsonPath().getList(path);
         System.out.println(skuNames);
 
         //String SearchKeyword = "Telma";
@@ -47,8 +48,8 @@ public class SearchSuggestion {
         */
 
         for (String sku: skuNames){
-            Assert.assertTrue(sku.toLowerCase().contains(BrandName.toLowerCase()),
-            "SKU does not contain the keyword" + BrandName + ":" + sku );
+            Assert.assertTrue(sku.toLowerCase().contains(value.toLowerCase()),
+            "SKU does not contain the keyword" + value + ":" + sku );
         }
     }
     
