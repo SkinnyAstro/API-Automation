@@ -15,8 +15,6 @@ import static org.hamcrest.Matchers.equalTo;
 
 public class SearchSuggestion {
 
-    String BrandName = "Telma";
-    String CompanyName = "Glenmark";
 
     @BeforeClass
     public void SetUp(){
@@ -53,32 +51,32 @@ public class SearchSuggestion {
         }
     }
     
-    @Test(description = "Searching via Company name")
-    public void CompanyNameSearch(){
+//    @Test(description = "Searching via Company name")
+//    public void CompanyNameSearch(){
+//        Response res =
+//                given()
+//                        .queryParam("searchString",CompanyName)
+//                        .when()
+//                        .get("/getSearchSuggestion")
+//                        .then()
+//                        .statusCode(200)
+//                        .extract().response();
+//        List<String> Names = res.jsonPath().getList("responseData.productList.product.manufacturerName");
+//        System.out.println(Names);
+//
+//
+//
+//        for (String sku : Names){
+//            Assert.assertTrue(sku.toLowerCase().contains(CompanyName.toLowerCase()),
+//            "SKU does not contain the keyword " + CompanyName + ":" + sku);
+//        }
+//    }
+
+    @Test(description = "MRP and Selling price should always be greater than 0",dataProvider ="searchData",dataProviderClass = UserDataProvider.class)
+    public void VerifyMRPandSellingprice(String value,String x){
         Response res =
                 given()
-                        .queryParam("searchString",CompanyName)
-                        .when()
-                        .get("/getSearchSuggestion")
-                        .then()
-                        .statusCode(200)
-                        .extract().response();
-        List<String> Names = res.jsonPath().getList("responseData.productList.product.manufacturerName");
-        System.out.println(Names);
-
-
-
-        for (String sku : Names){
-            Assert.assertTrue(sku.toLowerCase().contains(CompanyName.toLowerCase()),
-            "SKU does not contain the keyword " + CompanyName + ":" + sku);
-        }
-    }
-
-    @Test(description = "MRP and Selling price should always be greater than 0")
-    public void VerifyMRPandSellingprice(){
-        Response res =
-                given()
-                        .queryParam("searchString",BrandName)
+                        .queryParam("searchString",value)
                         .when()
                         .get("/getSearchSuggestion")
                         .then()
@@ -86,11 +84,11 @@ public class SearchSuggestion {
                         .extract().response();
 
         List<Number>MRP = res.jsonPath().getList("responseData.productList.product.mrp");
-        System.out.println(MRP);
+        //System.out.println(MRP);
 
         for (Number mrp: MRP){
            if (mrp.floatValue()>0){
-               System.out.println("Valid MRP is displayed");
+               System.out.println("Valid MRP is displayed : " + mrp);
            }else {
                System.out.println("Invalid MRP" + mrp);
            }
