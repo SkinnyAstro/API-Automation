@@ -18,12 +18,14 @@ public class RequestLogging {
     public void Search(String value , String path){
 
         given()
-                .log().parameters() // log when used after given is known as request logging
+                .log().parameters()// log when used after given is known as request logging
+
                 .queryParam("searchString",value)
                 .when()
                 .get("/getSearchSuggestion")
                 .then()
-                .log().body() // log used after then statement is used for response logging
+                //.log().body() // log used after then statement is used for response logging
+                .log().status()
                 .statusCode(200);
 
     }
