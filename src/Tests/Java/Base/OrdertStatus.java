@@ -8,7 +8,7 @@ import org.testng.asserts.SoftAssert;
 
 import static io.restassured.RestAssured.given;
 
-public class OrdertStatus {
+public class OrdertStatus extends OrderFlow {
 
     String accesstoken = "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWI" +
             "iOiI1NDI5NSIsImVudGl0eVR5cGUiOiJJRCIsInJvbGVMaXN0IjpbIlJPTEV" +
@@ -33,19 +33,19 @@ public class OrdertStatus {
                 .log().all()
                 .header("Authorization" , "Bearer " + accesstoken)
                 //.queryParam("customerId",54295)
-                .queryParam("orderId",1877514)
+                .queryParam("orderId",orderplaceid)
                 .contentType("application/json")
                 .when()
                 .get("/fetchOrderStatusDetails")
                 .then()
                 .statusCode(200)
-                //.log().all()
+                .log().all()
                 .extract().response();
 
         SoftAssert softAssert = new SoftAssert();
 
 
-        softAssert.assertEquals(res.jsonPath().getInt("responseData.orderId"),1877514,"Incorrect order id");
+        softAssert.assertEquals(res.jsonPath().getInt("responseData.orderId"),orderplaceid,"Incorrect order id");
         softAssert.assertNotNull(res.jsonPath().get("responseData.deliveryBy"),"Delivery date is missing");
         softAssert.assertNotNull(res.jsonPath().get("responseData.orderStatusTitle"), "Status title is missing");
         softAssert.assertAll();
