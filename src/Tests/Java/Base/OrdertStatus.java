@@ -65,9 +65,22 @@ public class OrdertStatus  {
 
         SoftAssert softAssert = new SoftAssert();
         softAssert.assertEquals(res.jsonPath().get("message"),"Invalid access for the order.");
-        softAssert.assertEquals(res.jsonPath().getInt("statusCode"),"Status code mismatch was observed");
+        softAssert.assertEquals(res.jsonPath().getInt("statusCode"),400);
         softAssert.assertAll();
+    }
 
+    @Test(alwaysRun = true)
+    public void NoAccessToken(){
+        int orderplaceid = OrderFlow.orderplaceid;
+        Response res =
+                given()
+                        .contentType("application/json")
+                        .queryParam("orderId",orderplaceid)
+                        .when()
+                        .get("/fetchOrderStatusDetails")
+                        .then()
+                        .statusCode(401)
+                        .extract().response();
 
     }
 }
