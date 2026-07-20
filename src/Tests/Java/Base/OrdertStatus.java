@@ -8,17 +8,9 @@ import org.testng.asserts.SoftAssert;
 
 import static io.restassured.RestAssured.given;
 
-public class OrdertStatus extends OrderFlow {
+public class OrdertStatus  {
 
-    String accesstoken = "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWI" +
-            "iOiI1NDI5NSIsImVudGl0eVR5cGUiOiJJRCIsInJvbGVMaXN0IjpbIlJPTEV" +
-            "fQ1VTVE9NRVIiXSwiaXNzIjoiY29tLnRydWVtZWRzLmF1dGhfc2VydmljZSIsImV" +
-            "4cCI6MTc4NDQ3MjE1MCwiaWF0IjoxNzg0Mzg1NzUwfQ.hWLvKwosxfStGQYssJIrUZ68" +
-            "VyLS6NiC61uoa-9rkMGrls4emWZ5N9BW42ewoSUdCC7WAns2ejhiNc7l3a84N0usHgzss" +
-            "D5h8Xam1uZzUeav-gcyLSzVMNHwGej4pu4CE4NOQQ1KpFlAEOVFZ_Dpfoin9Vas" +
-            "ZZ9QMRfmfR4iOV_Dx6yVEJyiKM71oJ-W1lE-t-XCmymC4hNEVLcvSOF5qSoeX" +
-            "4K237HjIAMasA3psmXwitoMF48TmvY9Hhsar274OteyhOXwrKoZqoY3ZduW_" +
-            "LxmZ7OCSvODm4MrxhGvGAtS8vKsdx-1WBRSQiatz_AzzZ2jdRl8kD50tztw2jpRPA";
+    String accesstoken = "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI1NDI5NSIsImVudGl0eVR5cGUiOiJJRCIsInJvbGVMaXN0IjpbIlJPTEVfQ1VTVE9NRVIiXSwiaXNzIjoiY29tLnRydWVtZWRzLmF1dGhfc2VydmljZSIsImV4cCI6MTc4NDYxMDIxMiwiaWF0IjoxNzg0NTIzODEyfQ.aFdzOnPK1VOM26nqamkwCEHDV7JIYhYYTLx60RX6WweFvxFsA4o-JKYt2vZbXjjGKGi3h0JfeBjLWqp58Zouk9td3FGAvl-pOBmuCW7ENAraccKDLGSZl85ogOal1ixxdtt_ujnqebB9Vt_6J9N2K1mw6bs3nKaFiB_x3Horot79EViykgsj2fsagzNvmZ8efnyiUJTsc-p4QUMKR8aXUAI2qN7fdPhgvk52uZZ--nBbX30Y8Bd0DT4An1O5QkgqTwGQptIOjpVkJixW2bCdP01nKP4BaWXodCeJllYKG9ZpM-XAH5Y8f9RBxdYAQ79dGdazNKE5bUG5P1BUJ6B-RQ";
 
     @BeforeClass
     public void SetUp(){
@@ -28,6 +20,7 @@ public class OrdertStatus extends OrderFlow {
 
     @Test
     public void OrderstatusDetails(){
+        int orderplaceid = OrderFlow.orderplaceid; // directly refrencing the Static
         Response res =
         given()
                 .log().all()
@@ -48,8 +41,32 @@ public class OrdertStatus extends OrderFlow {
         softAssert.assertEquals(res.jsonPath().getInt("responseData.orderId"),orderplaceid,"Incorrect order id");
         softAssert.assertNotNull(res.jsonPath().get("responseData.deliveryBy"),"Delivery date is missing");
         softAssert.assertNotNull(res.jsonPath().get("responseData.orderStatusTitle"), "Status title is missing");
-        softAssert.assertAll();
+        softAssert.assertEquals(res.jsonPath().getString("responseData.pageTitle"),"Order #"+orderplaceid,"Page title mismatch");
+        softAssert.assertNotNull(res.jsonPath().get("responseData.orderStatusTitle"),"Order Status title is missing");
+        softAssert.assertNotNull(res.jsonPath().get("responseData.deliveryDate"),"Delivery date is empty");
+        softAssert.assertNotNull(res.jsonPath().get("responseData.orderDate"),"Order date is empty");
 
+        softAssert.assertAll();
+    }
+
+    @Test(alwaysRun = true)
+    public void Invalidorderid(){
+        Response res =
+                given()
+                        .log().all()
+                        .header("Authorization", "Bearer " + accesstoken)
+                        .contentType("application/josn")
+                        .queryParam("orderId",12212090)
+                        .when()
+                        .get("/fetchOrderStatusDetails")
+                        .then()
+                        //.statusCode(400)
+                        .extract().response();
+
+        SoftAssert softAssert = new SoftAssert();
+        softAssert.assertEquals(res.jsonPath().get("message"),"Invalid access for the order.");
+        softAssert.assertEquals(res.jsonPath().getInt("statusCode"),"Status code mismatch was observed");
+        softAssert.assertAll();
 
 
     }

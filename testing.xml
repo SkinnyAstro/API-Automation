@@ -5,12 +5,8 @@
     <test name="Address API Tests">
 
         <classes>
-
-            <class name="Java.Base.AddressFlow"/>
-<!--            <class name="Java.Base.GetRequest"/>-->
-<!--            <class name="Java.Base.PostRequest"/>-->
-<!--            <class name="Java.Base.PostRequestPatient"/>-->
-<!--            <class name="Java.Base.ValidateResponse"/>-->
+            <class name="Java.Base.OrderFlow"></class>
+            <class name="Java.Base.OrdertStatus"></class>
 
         </classes>
 

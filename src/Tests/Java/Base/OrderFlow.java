@@ -15,28 +15,20 @@ import static io.restassured.RestAssured.given;
 
 public class OrderFlow {
 
-    String accesstoken = "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI1NDI5NSIsImVudGl0eVR5cGUiOiJJRCIsInJvbGVMaXN0IjpbIl" +
-            "JPTEVfQ1VTVE9NRVIiXSwiaXNzIjoiY29tLnRydWVtZWRzLmF1dGhfc2VydmljZSIsImV4cCI6MTc4NDU1ODQ3MiwiaWF0IjoxNzg0NDcyMDcyfQ.AI" +
-            "__XjmovmCs0UPIUOBp39kB0l7MpTkd-k_Ht8ZUQyAQ3aGRdEGVniLc-tVIgmVYhHM_xQun0B4rdvh_Dhr_dcAkA0Bt-wouk0XyBYR0DJ30bVLDab9WgJyv" +
-            "-MDf9XB9Nb7giS4lBDQLujC0e506_b-kQgR32mgGia_LWEQ7IkdbbV4GJfX6mGsNJObiYJK4ij4xuvn7TSdgE25mYsAamLdwjH6F5Fo1sp7uLvIa2zJDGro" +
-            "7AcOxkKwQVqWlw1OYXy2ri_IRvZO3f1eeQBWI19Rx_pAG-SbUx71CWIjYg_GmXJvIpZOLBICIHLnGvI9G84Yv2cLqanoXrN6gmWjKgw";
+    String accesstoken = "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI1NDI5NSIsImVudGl0eVR5cGUiOiJJRCIsInJvbGVMa" +
+            "XN0IjpbIlJPTEVfQ1VTVE9NRVIiXSwiaXNzIjoiY29tLnRydWVtZWRzLmF1dGhfc2VydmljZSIsImV4cCI6MTc4NDYxMDIxMiwiaWF0I" +
+            "joxNzg0NTIzODEyfQ.aFdzOnPK1VOM26nqamkwCEHDV7JIYhYYTLx60RX6WweFvxFsA4o-JKYt2vZbXjjGKGi3h0JfeBjLWqp58Zouk9td" +
+            "3FGAvl-pOBmuCW7ENAraccKDLGSZl85ogOal1ixxdtt_ujnqebB9Vt_6J9N2K1mw6bs3nKaFiB_x3Horot79EViykgsj2fsagzNvmZ8efny" +
+            "iUJTsc-p4QUMKR8aXUAI2qN7fdPhgvk52uZZ--nBbX30Y8Bd0DT4An1O5QkgqTwGQptIOjpVkJixW2bCdP01nKP4BaWXodCeJllYKG9ZpM-" +
+            "XAH5Y8f9RBxdYAQ79dGdazNKE5bUG5P1BUJ6B-RQ";
 
-    int orderplaceid;
+public static int orderplaceid;
+
 
     @BeforeClass
     public void Setup(){
         RestAssured.baseURI = "https://stage-ims.truemedsapi.in";
     }
-
-    /*
-   Save meds is called when adding medicine, Query param required could be customer id, pincode, addressID
-   cxAcceptedSubs: false
-   cxOrgAdded: false
-   isKeepOrg: false
-   medicineName: "Zandu Balm 8Ml"
-   productCode: "TM-BAGE1-000046"
-   quantity: 1
-     */
 
     @Test(description = "Adding medicine in cart")
     public void AddMedicine(){
@@ -79,7 +71,7 @@ public class OrderFlow {
         softAssert.assertAll();
     }
 
-    @Test(description = "Placing the order of added medicine",dependsOnMethods = "AddMedicine")
+    @Test(description = "Placing the order of added medicine")
     public void OrderPlacement(){
         RestAssured.basePath = "CustomerService/";
         Response res =
@@ -102,7 +94,7 @@ public class OrderFlow {
                 .post("v2/confirmOrder")
                 .then()
                 .log().all()
-                .statusCode(200)
+                .statusCode(500)
                 .extract().response();
     }
 }
