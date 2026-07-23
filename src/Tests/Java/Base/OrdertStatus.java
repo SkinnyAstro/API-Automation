@@ -20,7 +20,7 @@ public class OrdertStatus  {
 
     @Test
     public void OrderstatusDetails(){
-        int orderplaceid = OrderFlow.orderplaceid; // directly refrencing the Static
+        int orderplaceid = OrderFlow.orderplaceid; // directly referencing the Static variable created in some other class
         Response res =
         given()
                 .log().all()
