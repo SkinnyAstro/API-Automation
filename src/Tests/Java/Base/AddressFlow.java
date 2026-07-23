@@ -1,13 +1,12 @@
 package Java.Base;
 
-import Models.Addaddress;
+import POJO.Addaddress;
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import static io.restassured.RestAssured.given;
-import static io.restassured.RestAssured.when;
 import static org.hamcrest.Matchers.equalTo;
 
 public class AddressFlow {

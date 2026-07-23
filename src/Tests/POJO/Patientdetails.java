@@ -1,6 +1,4 @@
-package Models;
-
-import java.lang.ref.SoftReference;
+package POJO;
 
 public class Patientdetails {
 

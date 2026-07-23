@@ -1,6 +1,6 @@
 package Java.Base;
 
-import Models.MedicineData;
+import POJO.MedicineData;
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
 import org.testng.annotations.BeforeClass;

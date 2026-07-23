@@ -1,14 +1,12 @@
 package Java.Base;
 
-import Models.Addaddress;
+import POJO.Addaddress;
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
-import org.checkerframework.checker.units.qual.A;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import static io.restassured.RestAssured.given;
-import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.notNullValue;
 
 public class PostRequest {

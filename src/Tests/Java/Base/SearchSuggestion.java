@@ -1,17 +1,15 @@
 package Java.Base;
 
-import Models.UserDataProvider;
+import POJO.UserDataProvider;
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
-import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 import java.util.List;
 
 import static io.restassured.RestAssured.given;
-import static org.hamcrest.Matchers.equalTo;
 
 public class SearchSuggestion {
 

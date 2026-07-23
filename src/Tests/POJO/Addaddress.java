@@ -1,4 +1,4 @@
-package Models;
+package POJO;
 
 public class Addaddress {
 

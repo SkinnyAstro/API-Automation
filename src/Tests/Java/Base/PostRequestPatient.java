@@ -1,10 +1,9 @@
 package Java.Base;
 
-import Models.Patientdetails;
+import POJO.Patientdetails;
 import io.restassured.RestAssured;
 import io.restassured.path.json.JsonPath;
 import io.restassured.response.Response;
-import lombok.ToString;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 

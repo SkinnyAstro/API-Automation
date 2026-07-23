@@ -1,4 +1,4 @@
-package Models;
+package POJO;
 
 import org.testng.annotations.DataProvider;
 
