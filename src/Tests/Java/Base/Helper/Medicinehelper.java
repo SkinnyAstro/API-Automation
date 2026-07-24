@@ -4,12 +4,10 @@ import POJO.MedicineData;
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
 import static io.restassured.RestAssured.given;
-import org.joda.time.chrono.EthiopicChronology;
-
 import java.util.ArrayList;
 import java.util.List;
 
-import static io.restassured.path.json.JsonPath.given;
+
 
 public class Medicinehelper {
 
@@ -21,10 +19,12 @@ public class Medicinehelper {
 
     public Response addMedicine(String medicine,
                                 String productCode,
-                                int CustomerId,
+                                int customerId,
                                 int pincode,
                                 int addressId){
-        RestAssured.basePath = "";
+        RestAssured.basePath = "/OrderManagementService/v1/";
+
+        // Building POJO object
         MedicineData data = new MedicineData();
         data.setMedicineName(medicine);
         data.setProductCode(productCode);
@@ -33,6 +33,7 @@ public class Medicinehelper {
         data.setCxAcceptedSubs(false);
         data.setCxOrgAdded(true);
 
+        // Wrap POJO in a list
         List<MedicineData> requestBody = new ArrayList<>();
         requestBody.add(data);
 
@@ -40,7 +41,34 @@ public class Medicinehelper {
                 .log().all()
                 .header("Authorization","Bearer " + accesstoken)
                 .contentType("application/json")
-                .
+                .queryParam("customerId",customerId)
+                .queryParam("pincode",pincode)
+                .queryParam("addressId",addressId)
+                .queryParam("orderId",0)
+                .body(requestBody)
+                .when()
+                .post("saveMedsAndCreateOrder")
+                .then()
+                .log().all()
+                .extract().response();
+
+
+
+    }
+
+    // Getorder id Method ()
+    public int GetOrderid(String medicine,
+                          String productCode,
+                          int customerId,
+                          int pincode,
+                          int addressId){
+        Response res = addMedicine(medicine,productCode,customerId,pincode,addressId);
+
+        // Extracting the orderID from the response
+
+        int orderId = res.jsonPath().getInt("responseData.orderId");
+        System.out.println("Order Id captured " + orderId);
+        return orderId;
     }
 
 

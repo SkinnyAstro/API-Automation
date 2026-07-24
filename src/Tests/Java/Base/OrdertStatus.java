@@ -6,6 +6,7 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 import org.testng.asserts.SoftAssert;
 
+import static Java.Base.OrderFlow.orderplaceid;
 import static io.restassured.RestAssured.given;
 
 public class OrdertStatus  {
@@ -20,7 +21,7 @@ public class OrdertStatus  {
 
     @Test
     public void OrderstatusDetails(){
-        int orderplaceid = OrderFlow.orderplaceid; // directly referencing the Static variable created in some other class
+        //int orderplaceid = OrderFlow.orderplaceid; // directly referencing the Static variable created in some other class
         Response res =
         given()
                 .log().all()

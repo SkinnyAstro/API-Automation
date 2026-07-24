@@ -6,7 +6,7 @@
 
         <classes>
             <class name="Java.Base.OrderFlow"></class>
-            <class name="Java.Base.OrdertStatus"></class>
+
 
         </classes>
 
