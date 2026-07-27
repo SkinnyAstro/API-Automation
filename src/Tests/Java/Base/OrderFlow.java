@@ -28,12 +28,18 @@ public static int orderplaceid;
         medicinehelper = new Medicinehelper(accesstoken);
     }
 
+//    @Test
+//    public void addMedicine(){
+//        Response res = medicinehelper.addMedicine("Zandu Balm 8ml","TM-BAGE1-000046",54295,400079,5277128);
+//        res.then().statusCode(200);
+//        orderplaceid = res.jsonPath().getInt("responseData.orderId");
+//        System.out.println("Order ID " + orderplaceid);
+//    }
+
     @Test
-    public void addMedicine(){
-        Response res = medicinehelper.addMedicine("Zandu Balm 8ml","TM-BAGE1-000046",54295,400079,5277128);
-        res.then().statusCode(200);
-        orderplaceid = res.jsonPath().getInt("responseData.orderId");
-        System.out.println("Order ID " + orderplaceid);
+    public void GetOrderId(){
+       int PlaceorderId  = medicinehelper.GetOrderid("Zandu Balm 8ml","TM-BAGE1-000046",54295,400079,5277128);
+        System.out.println("Order Id " + PlaceorderId);
     }
 
 
