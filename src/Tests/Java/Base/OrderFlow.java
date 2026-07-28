@@ -36,10 +36,15 @@ public static int orderplaceid;
 //        System.out.println("Order ID " + orderplaceid);
 //    }
 
-    @Test
+    @Test(description = "Collecting the orderid")
     public void GetOrderId(){
        int orderId  = medicinehelper.GetOrderid("Zandu Balm 8ml","TM-BAGE1-000046",54295,400079,5277128);
         System.out.println("Order Id " + orderId);
+    }
+
+    @Test(description = "Placing the order")
+    public void OrderPlace(){
+
     }
 
 }
