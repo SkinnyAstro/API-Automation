@@ -12,6 +12,7 @@ import java.util.List;
 public class Medicinehelper {
 
     private  String accesstoken; // stores the token from test class
+    int orderId;
 
     public Medicinehelper(String accesstoken){
         this.accesstoken = accesstoken; // this.accesstoken is class variable and accesstoken is value passed from testclass
@@ -66,10 +67,35 @@ public class Medicinehelper {
 
         // Extracting the orderID from the response
 
-        int orderId = res.jsonPath().getInt("responseData.orderId");
+         this.orderId = res.jsonPath().getInt("responseData.orderId");
         System.out.println("Order Id captured " + orderId);
         return orderId;
     }
+
+    public Response  OrderPlace(){
+
+        RestAssured.basePath = "CustomerService/";
+        return given()
+                .header("Authorization","Bearer " + accesstoken)
+                .contentType("application/json")
+                .queryParam("orderId",orderId)
+                .queryParam("paymentId",17)
+                .queryParam("offerId",0)
+                .body("{\n" +
+                        "    \"source\": \"WEBSITE\",\n" +
+                        "    \"version\": \"TM_WEBSITE_V_4.4.1\",\n" +
+                        "    \"type\": \"Order\",\n" +
+                        "    \"entityId\": " + orderId + ",\n" +
+                        "    \"accepted\": true,\n" +
+                        "    \"policy\": \"Communication policy\"\n" +
+                        "}")
+                .when()
+                .post("v2/confirmOrder")
+                .then()
+                .extract().response();
+    }
+
+
 
 
 }

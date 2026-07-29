@@ -1,5 +1,4 @@
 package Java.Base;
-
 import Java.Base.Base.BaseTest;
 import Java.Base.Helper.Medicinehelper;
 import POJO.MedicineData;
@@ -13,12 +12,15 @@ import org.testng.asserts.SoftAssert;
 import java.util.ArrayList;
 import java.util.List;
 
+import static io.restassured.RestAssured.expect;
 import static io.restassured.RestAssured.given;
 
 public class OrderFlow extends BaseTest {
 
    private Medicinehelper medicinehelper;
     //private int orderplaceid;
+
+    int orderId;
 
 public static int orderplaceid;
 
@@ -38,12 +40,16 @@ public static int orderplaceid;
 
     @Test(description = "Collecting the orderid")
     public void GetOrderId(){
-       int orderId  = medicinehelper.GetOrderid("Zandu Balm 8ml","TM-BAGE1-000046",54295,400079,5277128);
+        orderId  = medicinehelper.GetOrderid("Zandu Balm 8ml","TM-BAGE1-000046",54295,400079,5277128);
         System.out.println("Order Id " + orderId);
     }
 
     @Test(description = "Placing the order")
-    public void OrderPlace(){
+    public void Placement(){
+       Response res =  medicinehelper.OrderPlace();
+        RestAssured.expect().statusCode(200);
+        SoftAssert softAssert = new SoftAssert();
+        softAssert.assertNotNull(res.jsonPath().get("message"),"Order confirmed successfully for orderId :" + orderId);
 
     }
 
