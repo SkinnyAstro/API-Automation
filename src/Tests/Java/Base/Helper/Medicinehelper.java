@@ -95,6 +95,20 @@ public class Medicinehelper {
                 .extract().response();
     }
 
+    public Response GetOrderStatus(int orderId){
+
+        RestAssured.basePath = "CustomerService/";
+        return given()
+                .header("Authorization","Bearer " + accesstoken)
+                .contentType("application/json")
+                .queryParam("orderId",orderId)
+                .when()
+                .get("/fetchOrderStatusDetails")
+                .then()
+                .statusCode(200)
+                .extract().response();
+    }
+
 
 
 

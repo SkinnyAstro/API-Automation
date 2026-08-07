@@ -44,12 +44,27 @@ public static int orderplaceid;
         System.out.println("Order Id " + orderId);
     }
 
-    @Test(description = "Placing the order")
+    @Test(dependsOnMethods = "GetOrderId")
     public void Placement(){
        Response res =  medicinehelper.OrderPlace();
         RestAssured.expect().statusCode(200);
         SoftAssert softAssert = new SoftAssert();
         softAssert.assertNotNull(res.jsonPath().get("message"),"Order confirmed successfully for orderId :" + orderId);
+
+    }
+
+    @Test(dependsOnMethods = "Placement")
+    public void OrderStatusVerification(){
+        Response res = medicinehelper.GetOrderStatus(orderId);
+        RestAssured.expect().statusCode(200);
+        SoftAssert softAssert = new SoftAssert();
+        softAssert.assertNotNull(res.jsonPath().get("responseData.deliveryBy"),"Delivery date is missing");
+        softAssert.assertNotNull(res.jsonPath().get("responseData.orderStatusTitle"), "Status title is missing");
+        softAssert.assertEquals(res.jsonPath().getString("responseData.pageTitle"),"Order #"+orderId,"Page title mismatch");
+        softAssert.assertNotNull(res.jsonPath().get("responseData.deliveryDate"),"Delivery date is empty");
+        softAssert.assertNotNull(res.jsonPath().get("responseData.orderDate"),"Order date is empty");
+        softAssert.assertAll();
+
 
     }
 
