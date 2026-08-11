@@ -5,11 +5,10 @@ import org.testng.annotations.BeforeClass;
 
 public class BaseTest {
 
-    protected static String accesstoken = "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI1NDI5NSIsImVudGl0eVR5cGUiOiJJRCIsInJvbGVMaXN0IjpbIlJPTEVfQ1VTVE9NRVIiXSwiaXNzIjoiY29tLnRydWVtZWRzLmF1dGh" +
-            "fc2VydmljZSIsImV4cCI6MTc4NjE2NDIyMCwiaWF0IjoxNzg2MDc3ODIwfQ.J_e4KbQIid9fvZ0q29EjajVTkVFdk5Z5RM704YHWHfOiUD4W2DaNUcL" +
-            "HFmUmA7MH8QT2-wqgVHJJWD_KY8cOqiQ56gSRF3LGGqAC_-8blRZ5vMQissK4b3itrZXibbR9jmnVkEsny9Opyl1swAc2G6QKjcrU2DE8pIj8gGP-z8frZro" +
-            "Z-IWHU3quheal-jY00EXd0mA7MLYrBX8EDwxTSXS2A_YUO-F0BNlrYaOjgv-cUexsBn9M6wsgrs40ISQjdV6dWnWiNB40pracVWCqT-TypmJ3pvd4NCO30eL" +
-            "bEdfwWFw392SrN5cJVWVesKeZW6lfvSE01BtfM1Qlm41yHw";
+    protected static String accesstoken = "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI1NDI5NSIsImVudGl0eVR5cGUiOiJJRCIsInJvbGVMaXN0IjpbIlJPTEVfQ1VTVE9NRVIiXSwia" +
+            "XNzIjoiY29tLnRydWVtZWRzLmF1dGhfc2VydmljZSIsImV4cCI6MTc4NjUyOTQ4NCwiaWF0IjoxNzg2NDQzMDg0fQ.nsAqBA1wialCE6LltTiKKePLq7zNP3e_Gt7y5bPSlDrTwMMzFEScU7C3Xr5KTp0COQq" +
+            "71i8UdeJmDN2AnMX89UjXYF7hMOOw1u24PnMEkjojSls563ZgF69KvCeeTsNZncNa5Sd_ZCEz19B5hFl8xEvpw6EDdq7oLP3-EykzUH4CkacqLsY31HqmXZs3C425DuI10Al0ZOPnyGWY_LfuQBdGEaAQUeXqHoi" +
+            "5S7MJspWA9idaVFpLe1oAmy1t_NxU4g9rKv0Op1byO2lcugkNLLxHcH3PBEMTbhSgExz_mCj86knTevMbl2VxiGP3FvI45LLmT1LTgZllzbzWGh_V8A";
 
     @BeforeClass
     public void Setup(){
