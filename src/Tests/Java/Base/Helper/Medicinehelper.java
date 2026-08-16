@@ -23,7 +23,7 @@ public class Medicinehelper {
                                 int customerId,
                                 int pincode,
                                 int addressId){
-        RestAssured.basePath = "/OrderManagementService/v1/";
+        //RestAssured.basePath = "/OrderManagementService/v1/";
 
         // Building POJO object
         MedicineData data = new MedicineData();
@@ -48,7 +48,7 @@ public class Medicinehelper {
                 .queryParam("orderId",0)
                 .body(requestBody)
                 .when()
-                .post("saveMedsAndCreateOrder")
+                .post("/OrderManagementService/v1/saveMedsAndCreateOrder")
                 .then()
                 .log().all()
                 .extract().response();
@@ -72,9 +72,23 @@ public class Medicinehelper {
         return orderId;
     }
 
+    public Response applyTmcash(int orderId){
+        return given()
+                .header("Authorization","Bearer "+ accesstoken)
+                .contentType("application/json")
+                .queryParam("orderId",orderId)
+                .queryParam("calculateTmRewards",true)
+                .queryParam("versionName","3.2.0")
+                .log().all()
+                .when()
+                .post("/CustomerService/calculateTmRewards")
+                .then()
+                .extract().response();
+    }
+
     public Response  OrderPlace(){
 
-        RestAssured.basePath = "CustomerService/";
+        //RestAssured.basePath = "CustomerService/";
         return given()
                 .header("Authorization","Bearer " + accesstoken)
                 .contentType("application/json")
@@ -90,26 +104,23 @@ public class Medicinehelper {
                         "    \"policy\": \"Communication policy\"\n" +
                         "}")
                 .when()
-                .post("v2/confirmOrder")
+                .post("CustomerService/v2/confirmOrder")
                 .then()
                 .extract().response();
     }
 
     public Response GetOrderStatus(int orderId){
 
-        RestAssured.basePath = "CustomerService/";
+        //RestAssured.basePath = "CustomerService/";
         return given()
+                .log().all()
                 .header("Authorization","Bearer " + accesstoken)
                 .contentType("application/json")
                 .queryParam("orderId",orderId)
                 .when()
-                .get("/fetchOrderStatusDetails")
+                .get("CustomerService/fetchOrderStatusDetails")
                 .then()
                 .statusCode(200)
                 .extract().response();
     }
-
-
-
-
 }

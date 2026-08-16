@@ -1,12 +1,16 @@
 package Java.Base;
+
 import Java.Base.Base.BaseTest;
+import Java.Base.Helper.Customerhelper;
 import Java.Base.Helper.Medicinehelper;
 import POJO.MedicineData;
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
 import org.testng.annotations.BeforeClass;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import org.testng.asserts.SoftAssert;
+import org.testng.SkipException;
 
 
 import java.util.ArrayList;
@@ -14,55 +18,69 @@ import java.util.List;
 
 import static io.restassured.RestAssured.expect;
 import static io.restassured.RestAssured.given;
+import static org.hamcrest.Matchers.equalTo;
 
 public class OrderFlow extends BaseTest {
 
-   private Medicinehelper medicinehelper;
-    //private int orderplaceid;
+    private Medicinehelper medicinehelper;
+    private Customerhelper customerhelper;
 
     int orderId;
+    float tmcash;
+    public static int orderplaceid;
 
-public static int orderplaceid;
 
-// Option 1 using the addMedicine()
     @BeforeClass(alwaysRun = true)
-   public void initHelpers(){
+    public void initHelpers() {
+        customerhelper = new Customerhelper(accesstoken);
         medicinehelper = new Medicinehelper(accesstoken);
     }
 
-//    @Test
-//    public void addMedicine(){
-//        Response res = medicinehelper.addMedicine("Zandu Balm 8ml","TM-BAGE1-000046",54295,400079,5277128);
-//        res.then().statusCode(200);
-//        orderplaceid = res.jsonPath().getInt("responseData.orderId");
-//        System.out.println("Order ID " + orderplaceid);
-//    }
-
     @Test(description = "Collecting the orderid")
-    public void GetOrderId(){
-        orderId  = medicinehelper.GetOrderid("Zandu Balm 8ml","TM-BAGE1-000046",54295,400079,5277128);
+    public void GetOrderId() {
+        orderId = medicinehelper.GetOrderid("Zandu Balm 8ml", "TM-BAGE1-000046", 54295, 400079, 5277128);
         System.out.println("Order Id " + orderId);
     }
 
+    @Test(description = "Applying rewards on the order")
+    public void applyRewardsonOrder(){
+
+        Response customerdetails = customerhelper.getCustomerDetails();
+        tmcash = customerdetails.jsonPath().getFloat("TmCash");
+        System.out.println(tmcash);
+
+        if (tmcash <=0){
+            throw new SkipException("Customer has no tm-cash, skipping reward related test cases");
+        }
+
+        Response res = medicinehelper.applyTmcash(orderId);
+        res.then()
+                .log().all()
+                .statusCode(200)
+                .body("statusCode", equalTo(200), "statusValue", equalTo("OK"))
+                .body("responseData.calculateTmRewards", equalTo(true));
+
+    }
+
     @Test(dependsOnMethods = "GetOrderId")
-    public void Placement(){
-       Response res =  medicinehelper.OrderPlace();
+    public void Placement() {
+        Response res = medicinehelper.OrderPlace();;
         RestAssured.expect().statusCode(200);
         SoftAssert softAssert = new SoftAssert();
-        softAssert.assertNotNull(res.jsonPath().get("message"),"Order confirmed successfully for orderId :" + orderId);
+        softAssert.assertNotNull(res.jsonPath().get("message"), "Order confirmed successfully for orderId :" + orderId);
 
     }
 
     @Test(dependsOnMethods = "Placement")
-    public void OrderStatusVerification(){
+    public void OrderStatusVerification() {
         Response res = medicinehelper.GetOrderStatus(orderId);
-        RestAssured.expect().statusCode(200);
+        //RestAssured.expect().statusCode(400);
         SoftAssert softAssert = new SoftAssert();
-        softAssert.assertNotNull(res.jsonPath().get("responseData.deliveryBy"),"Delivery date is missing");
+        softAssert.assertNotNull(res.jsonPath().get("responseData.deliveryBy"), "Delivery date is missing");
         softAssert.assertNotNull(res.jsonPath().get("responseData.orderStatusTitle"), "Status title is missing");
-        softAssert.assertEquals(res.jsonPath().getString("responseData.pageTitle"),"Order #"+orderId,"Page title mismatch");
-        softAssert.assertNotNull(res.jsonPath().get("responseData.deliveryDate"),"Delivery date is empty");
-        softAssert.assertNotNull(res.jsonPath().get("responseData.orderDate"),"Order date is empty");
+        softAssert.assertEquals(res.jsonPath().getString("responseData.pageTitle"), "Order #" + orderId, "Page title mismatch");
+        softAssert.assertNotNull(res.jsonPath().get("responseData.deliveryDate"), "Delivery date is empty");
+        softAssert.assertNotNull(res.jsonPath().get("responseData.orderDate"), "Order date is empty");
         softAssert.assertAll();
 
 
