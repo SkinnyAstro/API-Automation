@@ -6,6 +6,7 @@ import Java.Base.Helper.Medicinehelper;
 import POJO.MedicineData;
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
+import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -18,7 +19,9 @@ import java.util.List;
 
 import static io.restassured.RestAssured.expect;
 import static io.restassured.RestAssured.given;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.greaterThan;
 
 public class OrderFlow extends BaseTest {
 
@@ -42,7 +45,7 @@ public class OrderFlow extends BaseTest {
         System.out.println("Order Id " + orderId);
     }
 
-    @Test(description = "Applying rewards on the order")
+    @Test(description = "Applying rewards on the order",dependsOnMethods = "GetOrderId")
     public void applyRewardsonOrder(){
 
         Response customerdetails = customerhelper.getCustomerDetails();
@@ -62,10 +65,20 @@ public class OrderFlow extends BaseTest {
 
     }
 
+    @Test(description = "See if Rewards is visible in Bill details",dependsOnMethods = "applyRewardsonOrder")
+    public void Rewardsverificationinbilldetails(){
+        Response rewardsdetails = medicinehelper.getBilldetails(orderId);
+        double rewards = rewardsdetails.jsonPath().getDouble("responseData.tmCash");
+        SoftAssert softAssert = new SoftAssert();
+        softAssert.assertTrue(rewards > 0);
+        softAssert.assertAll();
+
+    }
+
     @Test(dependsOnMethods = "GetOrderId")
     public void Placement() {
         Response res = medicinehelper.OrderPlace();;
-        RestAssured.expect().statusCode(200);
+        res.then().statusCode(200);
         SoftAssert softAssert = new SoftAssert();
         softAssert.assertNotNull(res.jsonPath().get("message"), "Order confirmed successfully for orderId :" + orderId);
 
@@ -82,6 +95,23 @@ public class OrderFlow extends BaseTest {
         softAssert.assertNotNull(res.jsonPath().get("responseData.deliveryDate"), "Delivery date is empty");
         softAssert.assertNotNull(res.jsonPath().get("responseData.orderDate"), "Order date is empty");
         softAssert.assertAll();
+
+
+    }
+
+    @Test(description = "Verify Rewards after placement",dependsOnMethods = "Placement")
+    public void checkRewardsPostPlacement (){
+        Response rewardsdetails = medicinehelper.getBilldetails(orderId);
+        double rewardsBeforePlacement = rewardsdetails.jsonPath().getDouble("responseData.tmCash");
+
+        Response postplacementrewards = medicinehelper.getOrderDetails(orderId, customerId);
+        double rewardsAfterPlacement = postplacementrewards.jsonPath().getDouble("finalCalcAmt.tmCash");
+
+        SoftAssert softAssert = new SoftAssert();
+        softAssert.assertEquals(rewardsBeforePlacement,rewardsAfterPlacement);
+
+        softAssert.assertAll();
+
 
 
     }

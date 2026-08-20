@@ -13,6 +13,7 @@ public class Medicinehelper {
 
     private  String accesstoken; // stores the token from test class
     int orderId;
+    int customerId;
 
     public Medicinehelper(String accesstoken){
         this.accesstoken = accesstoken; // this.accesstoken is class variable and accesstoken is value passed from testclass
@@ -123,4 +124,33 @@ public class Medicinehelper {
                 .statusCode(200)
                 .extract().response();
     }
+
+    public Response getBilldetails(int orderId){
+        return given()
+                .log().all()
+                .header("Authorization","Bearer " + accesstoken)
+                .contentType("application/json")
+                .queryParam("orderId",orderId)
+                .when()
+                .get("/CustomerService/v1/cart/calculateBillDetailsforApp")
+                .then()
+                .statusCode(200)
+                .extract().response();
+    }
+
+    public Response getOrderDetails(int orderId, int customerId){
+        return given()
+                .log().all()
+                .header("Authorization","Bearer " + accesstoken)
+                .contentType("application/json")
+                .queryParam("orderId",orderId)
+                .queryParam("customerId",customerId)
+                .when()
+                .get("/CustomerService/getOrderDetails")
+                .then()
+                .statusCode(200)
+                .extract().response();
+    }
+
+
 }
