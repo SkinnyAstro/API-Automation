@@ -75,6 +75,7 @@ public class Medicinehelper {
 
     public Response applyTmcash(int orderId){
         return given()
+                .log().all()
                 .header("Authorization","Bearer "+ accesstoken)
                 .contentType("application/json")
                 .queryParam("orderId",orderId)
@@ -91,11 +92,20 @@ public class Medicinehelper {
 
         //RestAssured.basePath = "CustomerService/";
         return given()
+                .log().all()
                 .header("Authorization","Bearer " + accesstoken)
                 .contentType("application/json")
                 .queryParam("orderId",orderId)
                 .queryParam("paymentId",17)
                 .queryParam("offerId",0)
+                .queryParam("customerId",54685)
+                .queryParam("paymentMethod","UPI")
+                .queryParam("paymentMethodId",6)
+                .queryParam("orderConfirmSrc","IOS")
+                .queryParam("sourceVersion","v3.0.4")
+                .queryParam("checkAutoConfirmEligibility",true)
+                .queryParam("pageName","order_summary")
+                .queryParam("versionName","3.0.4")
                 .body("{\n" +
                         "    \"source\": \"WEBSITE\",\n" +
                         "    \"version\": \"TM_WEBSITE_V_4.4.1\",\n" +
@@ -144,7 +154,7 @@ public class Medicinehelper {
                 .header("Authorization","Bearer " + accesstoken)
                 .contentType("application/json")
                 .queryParam("orderId",orderId)
-                .queryParam("customerId",54313)
+                .queryParam("customerId",54685)
                 .when()
                 .get("/CustomerService/getOrderDetails")
                 .then()

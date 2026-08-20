@@ -41,7 +41,7 @@ public class OrderFlow extends BaseTest {
 
     @Test(description = "Collecting the orderid")
     public void GetOrderId() {
-        orderId = medicinehelper.GetOrderid("Zandu Balm 8ml", "TM-BAGE1-000046", 54295, 400079, 5277128);
+        orderId = medicinehelper.GetOrderid("Zandu Balm 8ml", "TM-BAGE1-000046", 54685, 421301, 5277926);
         System.out.println("Order Id " + orderId);
     }
 
@@ -87,6 +87,7 @@ public class OrderFlow extends BaseTest {
     @Test(dependsOnMethods = "Placement")
     public void OrderStatusVerification() {
         Response res = medicinehelper.GetOrderStatus(orderId);
+
         //RestAssured.expect().statusCode(400);
         SoftAssert softAssert = new SoftAssert();
         softAssert.assertNotNull(res.jsonPath().get("responseData.deliveryBy"), "Delivery date is missing");
@@ -99,7 +100,7 @@ public class OrderFlow extends BaseTest {
 
     }
 
-    @Test(description = "Verify Rewards after placement",dependsOnMethods = "Placement")
+    @Test(description = "Verify Rewards after placement",dependsOnMethods = "applyRewardsonOrder")
     public void checkRewardsPostPlacement (){
         Response rewardsdetails = medicinehelper.getBilldetails(orderId);
         double rewardsBeforePlacement = rewardsdetails.jsonPath().getDouble("responseData.tmCash");
