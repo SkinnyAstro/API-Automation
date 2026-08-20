@@ -104,15 +104,13 @@ public class OrderFlow extends BaseTest {
         Response rewardsdetails = medicinehelper.getBilldetails(orderId);
         double rewardsBeforePlacement = rewardsdetails.jsonPath().getDouble("responseData.tmCash");
 
-        Response postplacementrewards = medicinehelper.getOrderDetails(orderId, customerId);
+        Response postplacementrewards = medicinehelper.getOrderDetails(orderId);
         double rewardsAfterPlacement = postplacementrewards.jsonPath().getDouble("finalCalcAmt.tmCash");
 
         SoftAssert softAssert = new SoftAssert();
         softAssert.assertEquals(rewardsBeforePlacement,rewardsAfterPlacement);
 
         softAssert.assertAll();
-
-
 
     }
 

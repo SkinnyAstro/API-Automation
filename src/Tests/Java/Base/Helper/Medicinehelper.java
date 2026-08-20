@@ -13,7 +13,7 @@ public class Medicinehelper {
 
     private  String accesstoken; // stores the token from test class
     int orderId;
-    int customerId;
+    //int customerId;
 
     public Medicinehelper(String accesstoken){
         this.accesstoken = accesstoken; // this.accesstoken is class variable and accesstoken is value passed from testclass
@@ -138,13 +138,13 @@ public class Medicinehelper {
                 .extract().response();
     }
 
-    public Response getOrderDetails(int orderId, int customerId){
+    public Response getOrderDetails(int orderId){
         return given()
                 .log().all()
                 .header("Authorization","Bearer " + accesstoken)
                 .contentType("application/json")
                 .queryParam("orderId",orderId)
-                .queryParam("customerId",customerId)
+                .queryParam("customerId",54313)
                 .when()
                 .get("/CustomerService/getOrderDetails")
                 .then()
