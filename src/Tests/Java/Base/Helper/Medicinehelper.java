@@ -85,6 +85,7 @@ public class Medicinehelper {
                 .when()
                 .post("/CustomerService/calculateTmRewards")
                 .then()
+                .log().all()
                 .extract().response();
     }
 

@@ -81,7 +81,33 @@ public class OrderFlow extends BaseTest {
 
     }
 
-    @Test(dependsOnMethods = "Rewardsverificationinbilldetails",alwaysRun = true)
+    @Test(description = "Removing rewards post application", dependsOnMethods = "Rewardsverificationinbilldetails")
+    public void removeRewards(){
+        Response res = medicinehelper.applyTmcash(orderId,false);
+        res.then()
+                .statusCode(200)
+                .body("responseData.calculateTmRewards",equalTo(false));
+
+        Response billdetails = medicinehelper.getBilldetails(orderId);
+        double rewardsafterremoval = billdetails.jsonPath().getDouble("responseData.tmCash");
+        Assert.assertEquals(rewardsafterremoval,0.0,0.1,"We expected rewards after removal to be 0, but we got " + rewardsafterremoval);
+
+
+    }
+
+    @Test(description = "Reapplying rewards after removal", dependsOnMethods = "removeRewards")
+    public void reapplyRewards(){
+
+        Response res = medicinehelper.applyTmcash(orderId,true);
+        res.then()
+                .statusCode(200)
+                .body("responseData.calculateTmRewards" , equalTo(true));
+        Response rewardsdetails = medicinehelper.getBilldetails(orderId);
+        rewardsBeforePlacement = rewardsdetails.jsonPath().getDouble("responseData.tmCash");
+
+    }
+
+    @Test(dependsOnMethods = "reapplyRewards",alwaysRun = true)
     public void Placement() {
         Response res = medicinehelper.OrderPlace();;
         res.then().statusCode(200);
@@ -89,6 +115,8 @@ public class OrderFlow extends BaseTest {
         softAssert.assertNotNull(res.jsonPath().get("message"), "Order confirmed successfully for orderId :" + orderId);
 
     }
+
+
 
     @Test(dependsOnMethods = "Placement")
     public void OrderStatusVerification() {
