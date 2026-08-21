@@ -73,14 +73,14 @@ public class Medicinehelper {
         return orderId;
     }
 
-    public Response applyTmcash(int orderId){
+    public Response applyTmcash(int orderId, boolean calculateTmRewards){
         return given()
                 .log().all()
                 .header("Authorization","Bearer "+ accesstoken)
                 .contentType("application/json")
                 .queryParam("orderId",orderId)
-                .queryParam("calculateTmRewards",true)
-                .queryParam("versionName","3.2.0")
+                .queryParam("calculateTmRewards",calculateTmRewards)
+                .queryParam("versionName","9.7.0")
                 .log().all()
                 .when()
                 .post("/CustomerService/calculateTmRewards")
@@ -144,6 +144,7 @@ public class Medicinehelper {
                 .when()
                 .get("/CustomerService/v1/cart/calculateBillDetailsforApp")
                 .then()
+                .log().all()
                 .statusCode(200)
                 .extract().response();
     }
@@ -158,6 +159,7 @@ public class Medicinehelper {
                 .when()
                 .get("/CustomerService/getOrderDetails")
                 .then()
+                .log().all()
                 .statusCode(200)
                 .extract().response();
     }

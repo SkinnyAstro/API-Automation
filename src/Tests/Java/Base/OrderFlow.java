@@ -31,6 +31,7 @@ public class OrderFlow extends BaseTest {
     int orderId;
     float tmcash;
     public static int orderplaceid;
+    double rewardsBeforePlacement;
 
 
     @BeforeClass(alwaysRun = true)
@@ -50,13 +51,13 @@ public class OrderFlow extends BaseTest {
 
         Response customerdetails = customerhelper.getCustomerDetails();
         tmcash = customerdetails.jsonPath().getFloat("TmCash");
-        System.out.println(tmcash);
+        System.out.println("Customer has : " + tmcash);
 
         if (tmcash <=0){
             throw new SkipException("Customer has no tm-cash, skipping reward related test cases");
         }
 
-        Response res = medicinehelper.applyTmcash(orderId);
+        Response res = medicinehelper.applyTmcash(orderId,true);
         res.then()
                 .log().all()
                 .statusCode(200)
@@ -66,16 +67,21 @@ public class OrderFlow extends BaseTest {
     }
 
     @Test(description = "See if Rewards is visible in Bill details",dependsOnMethods = "applyRewardsonOrder")
-    public void Rewardsverificationinbilldetails(){
+    public void Rewardsverificationinbilldetails() throws InterruptedException {
         Response rewardsdetails = medicinehelper.getBilldetails(orderId);
-        double rewards = rewardsdetails.jsonPath().getDouble("responseData.tmCash");
+        rewardsBeforePlacement = rewardsdetails.jsonPath().getDouble("responseData.tmCash");
+        double sellingPrice = rewardsdetails.jsonPath().getDouble("responseData.sellingPrice");
+        double expectedrewards = sellingPrice * 0.10;
+
         SoftAssert softAssert = new SoftAssert();
-        softAssert.assertTrue(rewards > 0);
+        softAssert.assertTrue(rewardsBeforePlacement > 0);
+        softAssert.assertEquals(rewardsBeforePlacement,expectedrewards,0.01,"Expected reward should be that 10% of selling price, we expected " + expectedrewards + "but we got" + rewardsBeforePlacement);
+
         softAssert.assertAll();
 
     }
 
-    @Test(dependsOnMethods = "GetOrderId")
+    @Test(dependsOnMethods = "Rewardsverificationinbilldetails",alwaysRun = true)
     public void Placement() {
         Response res = medicinehelper.OrderPlace();;
         res.then().statusCode(200);
@@ -100,10 +106,8 @@ public class OrderFlow extends BaseTest {
 
     }
 
-    @Test(description = "Verify Rewards after placement",dependsOnMethods = "applyRewardsonOrder")
+    @Test(description = "Verify Rewards after placement",dependsOnMethods = {"OrderStatusVerification","Rewardsverificationinbilldetails"})
     public void checkRewardsPostPlacement (){
-        Response rewardsdetails = medicinehelper.getBilldetails(orderId);
-        double rewardsBeforePlacement = rewardsdetails.jsonPath().getDouble("responseData.tmCash");
 
         Response postplacementrewards = medicinehelper.getOrderDetails(orderId);
         double rewardsAfterPlacement = postplacementrewards.jsonPath().getDouble("finalCalcAmt.tmCash");
