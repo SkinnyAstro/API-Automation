@@ -5,13 +5,13 @@ import org.testng.annotations.BeforeClass;
 
 public class BaseTest {
 
-    protected static String accesstoken = "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI1NDI5NSIsImVudGl0eVR5cGUiOiJJRCIsInJvbGVMaXN0IjpbIlJPTEVfQ1VTVE9NRVIiXSwia" +
-            "XNzIjoiY29tLnRydWVtZWRzLmF1dGhfc2VydmljZSIsImV4cCI6MTc4NjUyOTQ4NCwiaWF0IjoxNzg2NDQzMDg0fQ.nsAqBA1wialCE6LltTiKKePLq7zNP3e_Gt7y5bPSlDrTwMMzFEScU7C3Xr5KTp0COQq" +
-            "71i8UdeJmDN2AnMX89UjXYF7hMOOw1u24PnMEkjojSls563ZgF69KvCeeTsNZncNa5Sd_ZCEz19B5hFl8xEvpw6EDdq7oLP3-EykzUH4CkacqLsY31HqmXZs3C425DuI10Al0ZOPnyGWY_LfuQBdGEaAQUeXqHoi" +
-            "5S7MJspWA9idaVFpLe1oAmy1t_NxU4g9rKv0Op1byO2lcugkNLLxHcH3PBEMTbhSgExz_mCj86knTevMbl2VxiGP3FvI45LLmT1LTgZllzbzWGh_V8A";
+    protected static String accesstoken = "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI1NDY4NSIsImVudGl0eVR5cGUiOiJJRCIsInJvbGVMaXN0IjpbIlJPTEVfQ" +
+            "1VTVE9NRVIiXSwiaXNzIjoiY29tLnRydWVtZWRzLmF1dGhfc2VydmljZSIsImV4cCI6MTc4NzQ2ODE0NSwiaWF0IjoxNzg3MzgxNzQ1fQ.XPjtsDkvKlLEhhb3dVtLIFCqa_4rv-jqZpr" +
+            "iaznMwWbHHRapJiF9UOPPpJ_P3_Sz20K-_-sTeFZ320FQBaybtpGrGOEO6gpyPeQnydX7vLbTrR2lINnXciaVl_W3x7asXAerdszMLcRRHilg-8X2hO32hGUtiBKSERigiTfxdm1v6qIRZbsu6" +
+            "pfBAMHq8PwxiklpwtrGlhUZM1Q0V6H65QUAscxJZ-Ah9c9yd7awaCHkOWbBs4wsec38wF163plgXJxGxGhdqIuq0u0FglqOgLFcXoZzx_ndiLjznRUpbN4mGc-sUW2jX8_2XInmqypU7qL_D64XyMnEPnSgKM2uqw";
 
     @BeforeClass
     public void Setup(){
-        RestAssured.baseURI = "https://stage-portal.truemedsapi.in";
+        RestAssured.baseURI = "https://stage-dev.truemedsapi.in";
     }
 }

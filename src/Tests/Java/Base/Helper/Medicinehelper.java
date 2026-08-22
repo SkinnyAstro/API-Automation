@@ -13,6 +13,7 @@ public class Medicinehelper {
 
     private  String accesstoken; // stores the token from test class
     int orderId;
+    //int customerId;
 
     public Medicinehelper(String accesstoken){
         this.accesstoken = accesstoken; // this.accesstoken is class variable and accesstoken is value passed from testclass
@@ -23,7 +24,7 @@ public class Medicinehelper {
                                 int customerId,
                                 int pincode,
                                 int addressId){
-        RestAssured.basePath = "/OrderManagementService/v1/";
+        //RestAssured.basePath = "/OrderManagementService/v1/";
 
         // Building POJO object
         MedicineData data = new MedicineData();
@@ -48,9 +49,9 @@ public class Medicinehelper {
                 .queryParam("orderId",0)
                 .body(requestBody)
                 .when()
-                .post("saveMedsAndCreateOrder")
+                .post("/OrderManagementService/v1/saveMedsAndCreateOrder")
                 .then()
-                .log().all()
+                .log().ifValidationFails()
                 .extract().response();
 
 
@@ -72,15 +73,40 @@ public class Medicinehelper {
         return orderId;
     }
 
+    public Response applyTmcash(int orderId, boolean calculateTmRewards){
+        return given()
+                .log().all()
+                .header("Authorization","Bearer "+ accesstoken)
+                .contentType("application/json")
+                .queryParam("orderId",orderId)
+                .queryParam("calculateTmRewards",calculateTmRewards)
+                .queryParam("versionName","9.7.0")
+                .log().all()
+                .when()
+                .post("/CustomerService/calculateTmRewards")
+                .then()
+                .log().ifValidationFails()
+                .extract().response();
+    }
+
     public Response  OrderPlace(){
 
-        RestAssured.basePath = "CustomerService/";
+        //RestAssured.basePath = "CustomerService/";
         return given()
+                .log().all()
                 .header("Authorization","Bearer " + accesstoken)
                 .contentType("application/json")
                 .queryParam("orderId",orderId)
                 .queryParam("paymentId",17)
                 .queryParam("offerId",0)
+                .queryParam("customerId",54685)
+                .queryParam("paymentMethod","UPI")
+                .queryParam("paymentMethodId",6)
+                .queryParam("orderConfirmSrc","IOS")
+                .queryParam("sourceVersion","v3.0.4")
+                .queryParam("checkAutoConfirmEligibility",true)
+                .queryParam("pageName","order_summary")
+                .queryParam("versionName","3.0.4")
                 .body("{\n" +
                         "    \"source\": \"WEBSITE\",\n" +
                         "    \"version\": \"TM_WEBSITE_V_4.4.1\",\n" +
@@ -90,26 +116,56 @@ public class Medicinehelper {
                         "    \"policy\": \"Communication policy\"\n" +
                         "}")
                 .when()
-                .post("v2/confirmOrder")
+                .post("CustomerService/v2/confirmOrder")
                 .then()
+                .log().ifValidationFails()
                 .extract().response();
     }
 
     public Response GetOrderStatus(int orderId){
 
-        RestAssured.basePath = "CustomerService/";
+        //RestAssured.basePath = "CustomerService/";
         return given()
+                .log().all()
                 .header("Authorization","Bearer " + accesstoken)
                 .contentType("application/json")
                 .queryParam("orderId",orderId)
                 .when()
-                .get("/fetchOrderStatusDetails")
+                .get("CustomerService/fetchOrderStatusDetails")
                 .then()
+                .log().ifValidationFails()
                 .statusCode(200)
                 .extract().response();
     }
 
+    public Response getBilldetails(int orderId){
+        return given()
+                .log().all()
+                .header("Authorization","Bearer " + accesstoken)
+                .contentType("application/json")
+                .queryParam("orderId",orderId)
+                .when()
+                .get("/CustomerService/v1/cart/calculateBillDetailsforApp")
+                .then()
+                .log().ifValidationFails()
+                .statusCode(200)
+                .extract().response();
+    }
 
+    public Response getOrderDetails(int orderId){
+        return given()
+                .log().all()
+                .header("Authorization","Bearer " + accesstoken)
+                .contentType("application/json")
+                .queryParam("orderId",orderId)
+                .queryParam("customerId",54685)
+                .when()
+                .get("/CustomerService/getOrderDetails")
+                .then()
+                .log().ifValidationFails()
+                .statusCode(200)
+                .extract().response();
+    }
 
 
 }

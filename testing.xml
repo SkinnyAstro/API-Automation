@@ -2,6 +2,10 @@
 
 <suite name="API Automation Suite">
 
+    <listeners>
+        <listener class-name="Java.Base.Reporting.ExtentTestListener"/>
+    </listeners>
+
     <test name="Address API Tests">
 
         <classes>
