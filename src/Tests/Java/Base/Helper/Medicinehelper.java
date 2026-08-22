@@ -51,7 +51,7 @@ public class Medicinehelper {
                 .when()
                 .post("/OrderManagementService/v1/saveMedsAndCreateOrder")
                 .then()
-                .log().all()
+                .log().ifValidationFails()
                 .extract().response();
 
 
@@ -85,7 +85,7 @@ public class Medicinehelper {
                 .when()
                 .post("/CustomerService/calculateTmRewards")
                 .then()
-                .log().all()
+                .log().ifValidationFails()
                 .extract().response();
     }
 
@@ -118,6 +118,7 @@ public class Medicinehelper {
                 .when()
                 .post("CustomerService/v2/confirmOrder")
                 .then()
+                .log().ifValidationFails()
                 .extract().response();
     }
 
@@ -132,6 +133,7 @@ public class Medicinehelper {
                 .when()
                 .get("CustomerService/fetchOrderStatusDetails")
                 .then()
+                .log().ifValidationFails()
                 .statusCode(200)
                 .extract().response();
     }
@@ -145,7 +147,7 @@ public class Medicinehelper {
                 .when()
                 .get("/CustomerService/v1/cart/calculateBillDetailsforApp")
                 .then()
-                .log().all()
+                .log().ifValidationFails()
                 .statusCode(200)
                 .extract().response();
     }
@@ -160,7 +162,7 @@ public class Medicinehelper {
                 .when()
                 .get("/CustomerService/getOrderDetails")
                 .then()
-                .log().all()
+                .log().ifValidationFails()
                 .statusCode(200)
                 .extract().response();
     }

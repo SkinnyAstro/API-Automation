@@ -3,25 +3,14 @@ package Java.Base;
 import Java.Base.Base.BaseTest;
 import Java.Base.Helper.Customerhelper;
 import Java.Base.Helper.Medicinehelper;
-import POJO.MedicineData;
-import io.restassured.RestAssured;
 import io.restassured.response.Response;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
-import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import org.testng.asserts.SoftAssert;
 import org.testng.SkipException;
-
-
-import java.util.ArrayList;
-import java.util.List;
-
-import static io.restassured.RestAssured.expect;
-import static io.restassured.RestAssured.given;
-import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.greaterThan;
+
 
 public class OrderFlow extends BaseTest {
 
@@ -29,8 +18,7 @@ public class OrderFlow extends BaseTest {
     private Customerhelper customerhelper;
 
     int orderId;
-    float tmcash;
-    public static int orderplaceid;
+    double tmcash;
     double rewardsBeforePlacement;
 
 
@@ -50,7 +38,7 @@ public class OrderFlow extends BaseTest {
     public void applyRewardsonOrder(){
 
         Response customerdetails = customerhelper.getCustomerDetails();
-        tmcash = customerdetails.jsonPath().getFloat("TmCash");
+        tmcash = customerdetails.jsonPath().getDouble("TmCash");
         System.out.println("Customer has : " + tmcash);
 
         if (tmcash <=0){
@@ -59,7 +47,7 @@ public class OrderFlow extends BaseTest {
 
         Response res = medicinehelper.applyTmcash(orderId,true);
         res.then()
-                .log().all()
+                .log().ifValidationFails()
                 .statusCode(200)
                 .body("statusCode", equalTo(200), "statusValue", equalTo("OK"))
                 .body("responseData.calculateTmRewards", equalTo(true));
@@ -67,7 +55,7 @@ public class OrderFlow extends BaseTest {
     }
 
     @Test(description = "See if Rewards is visible in Bill details",dependsOnMethods = "applyRewardsonOrder")
-    public void Rewardsverificationinbilldetails() throws InterruptedException {
+    public void Rewardsverificationinbilldetails() {
         Response rewardsdetails = medicinehelper.getBilldetails(orderId);
         rewardsBeforePlacement = rewardsdetails.jsonPath().getDouble("responseData.tmCash");
         double sellingPrice = rewardsdetails.jsonPath().getDouble("responseData.sellingPrice");
@@ -109,7 +97,7 @@ public class OrderFlow extends BaseTest {
 
     @Test(dependsOnMethods = "reapplyRewards",alwaysRun = true)
     public void Placement() {
-        Response res = medicinehelper.OrderPlace();;
+        Response res = medicinehelper.OrderPlace();
         res.then().statusCode(200);
         SoftAssert softAssert = new SoftAssert();
         softAssert.assertNotNull(res.jsonPath().get("message"), "Order confirmed successfully for orderId :" + orderId);
@@ -121,8 +109,6 @@ public class OrderFlow extends BaseTest {
     @Test(dependsOnMethods = "Placement")
     public void OrderStatusVerification() {
         Response res = medicinehelper.GetOrderStatus(orderId);
-
-        //RestAssured.expect().statusCode(400);
         SoftAssert softAssert = new SoftAssert();
         softAssert.assertNotNull(res.jsonPath().get("responseData.deliveryBy"), "Delivery date is missing");
         softAssert.assertNotNull(res.jsonPath().get("responseData.orderStatusTitle"), "Status title is missing");
@@ -141,7 +127,7 @@ public class OrderFlow extends BaseTest {
         double rewardsAfterPlacement = postplacementrewards.jsonPath().getDouble("finalCalcAmt.tmCash");
 
         SoftAssert softAssert = new SoftAssert();
-        softAssert.assertEquals(rewardsBeforePlacement,rewardsAfterPlacement);
+        softAssert.assertEquals(rewardsBeforePlacement,rewardsAfterPlacement,0.01,"We expected rewards to be " + rewardsBeforePlacement + " but we ended up getting " + rewardsAfterPlacement);
 
         softAssert.assertAll();
 
