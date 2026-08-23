@@ -1,12 +1,15 @@
 package Java.Base.Helper;
 
+import Java.Base.Config.ConfigManager;
 import POJO.MedicineData;
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
 import static io.restassured.RestAssured.given;
+
+import java.io.ObjectInputFilter;
 import java.util.ArrayList;
 import java.util.List;
-
+import java.util.concurrent.locks.Condition;
 
 
 public class Medicinehelper {
@@ -40,7 +43,7 @@ public class Medicinehelper {
         requestBody.add(data);
 
         return given()
-                .log().all()
+                .log().ifValidationFails()
                 .header("Authorization","Bearer " + accesstoken)
                 .contentType("application/json")
                 .queryParam("customerId",customerId)
@@ -75,13 +78,12 @@ public class Medicinehelper {
 
     public Response applyTmcash(int orderId, boolean calculateTmRewards){
         return given()
-                .log().all()
+                .log().ifValidationFails()
                 .header("Authorization","Bearer "+ accesstoken)
                 .contentType("application/json")
                 .queryParam("orderId",orderId)
                 .queryParam("calculateTmRewards",calculateTmRewards)
                 .queryParam("versionName","9.7.0")
-                .log().all()
                 .when()
                 .post("/CustomerService/calculateTmRewards")
                 .then()
@@ -97,11 +99,11 @@ public class Medicinehelper {
                 .header("Authorization","Bearer " + accesstoken)
                 .contentType("application/json")
                 .queryParam("orderId",orderId)
-                .queryParam("paymentId",17)
+                .queryParam("paymentId", ConfigManager.get("payment.id"))
                 .queryParam("offerId",0)
-                .queryParam("customerId",54685)
-                .queryParam("paymentMethod","UPI")
-                .queryParam("paymentMethodId",6)
+                .queryParam("customerId",ConfigManager.get("test.customer.id"))
+                .queryParam("paymentMethod", ConfigManager.get("payment.method"))
+                .queryParam("paymentMethodId", ConfigManager.get("payment.method.id"))
                 .queryParam("orderConfirmSrc","IOS")
                 .queryParam("sourceVersion","v3.0.4")
                 .queryParam("checkAutoConfirmEligibility",true)
@@ -158,7 +160,7 @@ public class Medicinehelper {
                 .header("Authorization","Bearer " + accesstoken)
                 .contentType("application/json")
                 .queryParam("orderId",orderId)
-                .queryParam("customerId",54685)
+                .queryParam("customerId",ConfigManager.get("test.customer.id"))
                 .when()
                 .get("/CustomerService/getOrderDetails")
                 .then()

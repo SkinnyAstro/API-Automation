@@ -1,0 +1,11 @@
+base.url=https://your-environment-url.example.com
+access.token=your-access-token-here
+test.customer.id=00000
+payment.id=0
+payment.method=UPI
+payment.method.id=0
+default.medicine.name=Sample Medicine Name
+default.product.code=SAMPLE-CODE-000000
+default.pincode=000000
+default.address.id=0000000
+version.name=0.0.0

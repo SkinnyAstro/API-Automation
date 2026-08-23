@@ -17,7 +17,7 @@ public class Customerhelper {
         return given()
                 .header("Authorization","Bearer " + accesstoken)
                 .contentType("application/json")
-                .log().all()
+                .log().ifValidationFails()
                 .when()
                 .post("/CustomerService/getCustomerDetails")
                 .then()
