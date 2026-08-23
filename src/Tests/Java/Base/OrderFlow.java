@@ -7,6 +7,7 @@ import Java.Base.Helper.Medicinehelper;
 import io.restassured.response.Response;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
+import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 import org.testng.asserts.SoftAssert;
 import org.testng.SkipException;
@@ -140,6 +141,26 @@ public class OrderFlow extends BaseTest {
 
         softAssert.assertAll();
 
+    }
+
+    @DataProvider(name = "MedicineData")
+    public Object [][] getMedicineData(){
+        return new Object[][]{
+                {"Telma 40 Tablet 15","TM-TACR1-038772"},
+                {"Ciplactin Tablet 15","TM-TACR1-008278"}
+        };
+    }
+
+    @Test(dataProvider = "MedicineData", description =  " Verify placing an order with multiple medicine")
+    public void VerifyOrderCreationMultiplemedicine(String medicinename, String medicinecode){
+        int newOrderid = medicinehelper.GetOrderid(
+                medicinename,
+                medicinecode,
+                Integer.parseInt(ConfigManager.get("test.customer.id")),
+                Integer.parseInt(ConfigManager.get("default.pincode")),
+                Integer.parseInt(ConfigManager.get("default.address.id")));
+
+            Assert.assertTrue(newOrderid > 0,"Expected valid order id to be create for medicine " + medicinename);
     }
 
 }
