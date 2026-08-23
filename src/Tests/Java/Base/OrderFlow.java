@@ -1,6 +1,7 @@
 package Java.Base;
 
 import Java.Base.Base.BaseTest;
+import Java.Base.Config.ConfigManager;
 import Java.Base.Helper.Customerhelper;
 import Java.Base.Helper.Medicinehelper;
 import io.restassured.response.Response;
@@ -9,6 +10,9 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 import org.testng.asserts.SoftAssert;
 import org.testng.SkipException;
+
+import java.io.ObjectInputFilter;
+
 import static org.hamcrest.Matchers.equalTo;
 
 
@@ -30,7 +34,12 @@ public class OrderFlow extends BaseTest {
 
     @Test(description = "Collecting the orderid")
     public void GetOrderId() {
-        orderId = medicinehelper.GetOrderid("Zandu Balm 8ml", "TM-BAGE1-000046", 54685, 421301, 5277926);
+        orderId = medicinehelper.GetOrderid(
+                ConfigManager.get("default.medicine.name"),
+                ConfigManager.get("default.product.code"),
+                Integer.parseInt(ConfigManager.get("test.customer.id")),
+                Integer.parseInt(ConfigManager.get("default.pincode")),
+                Integer.parseInt(ConfigManager.get("default.address.id")));
         System.out.println("Order Id " + orderId);
     }
 

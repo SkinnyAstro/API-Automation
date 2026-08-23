@@ -36,3 +36,7 @@ build/
 
 ### Mac OS ###
 .DS_Store
+
+### Project-specific ###
+src/main/resources/config.properties
+test-output/
