@@ -5,17 +5,15 @@ import POJO.MedicineData;
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
 import static io.restassured.RestAssured.given;
-
-import java.io.ObjectInputFilter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.locks.Condition;
+
 
 
 public class Medicinehelper {
 
     private  String accesstoken; // stores the token from test class
-    int orderId;
+
     //int customerId;
 
     public Medicinehelper(String accesstoken){
@@ -71,7 +69,7 @@ public class Medicinehelper {
 
         // Extracting the orderID from the response
 
-         this.orderId = res.jsonPath().getInt("responseData.orderId");
+         int orderId = res.jsonPath().getInt("responseData.orderId");
         System.out.println("Order Id captured " + orderId);
         return orderId;
     }
@@ -91,14 +89,14 @@ public class Medicinehelper {
                 .extract().response();
     }
 
-    public Response  OrderPlace(){
+    public Response  OrderPlace(int placementorderId){
 
         //RestAssured.basePath = "CustomerService/";
         return given()
-                .log().all()
+                .log().ifValidationFails()
                 .header("Authorization","Bearer " + accesstoken)
                 .contentType("application/json")
-                .queryParam("orderId",orderId)
+                .queryParam("orderId",placementorderId)
                 .queryParam("paymentId", ConfigManager.get("payment.id"))
                 .queryParam("offerId",0)
                 .queryParam("customerId",ConfigManager.get("test.customer.id"))
@@ -113,7 +111,7 @@ public class Medicinehelper {
                         "    \"source\": \"WEBSITE\",\n" +
                         "    \"version\": \"TM_WEBSITE_V_4.4.1\",\n" +
                         "    \"type\": \"Order\",\n" +
-                        "    \"entityId\": " + orderId + ",\n" +
+                        "    \"entityId\": " + placementorderId + ",\n" +
                         "    \"accepted\": true,\n" +
                         "    \"policy\": \"Communication policy\"\n" +
                         "}")
@@ -128,7 +126,7 @@ public class Medicinehelper {
 
         //RestAssured.basePath = "CustomerService/";
         return given()
-                .log().all()
+                .log().ifValidationFails()
                 .header("Authorization","Bearer " + accesstoken)
                 .contentType("application/json")
                 .queryParam("orderId",orderId)
@@ -142,7 +140,7 @@ public class Medicinehelper {
 
     public Response getBilldetails(int orderId){
         return given()
-                .log().all()
+                .log().ifValidationFails()
                 .header("Authorization","Bearer " + accesstoken)
                 .contentType("application/json")
                 .queryParam("orderId",orderId)
@@ -156,7 +154,7 @@ public class Medicinehelper {
 
     public Response getOrderDetails(int orderId){
         return given()
-                .log().all()
+                .log().ifValidationFails()
                 .header("Authorization","Bearer " + accesstoken)
                 .contentType("application/json")
                 .queryParam("orderId",orderId)

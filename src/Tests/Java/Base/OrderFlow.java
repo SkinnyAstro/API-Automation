@@ -66,6 +66,8 @@ public class OrderFlow extends BaseTest {
 
     @Test(description = "See if Rewards is visible in Bill details",dependsOnMethods = "applyRewardsonOrder")
     public void Rewardsverificationinbilldetails() {
+        System.out.println("Rewards verification started");
+        System.out.println(orderId);
         Response rewardsdetails = medicinehelper.getBilldetails(orderId);
         rewardsBeforePlacement = rewardsdetails.jsonPath().getDouble("responseData.tmCash");
         double sellingPrice = rewardsdetails.jsonPath().getDouble("responseData.sellingPrice");
@@ -107,7 +109,7 @@ public class OrderFlow extends BaseTest {
 
     @Test(dependsOnMethods = "reapplyRewards",alwaysRun = true)
     public void Placement() {
-        Response res = medicinehelper.OrderPlace();
+        Response res = medicinehelper.OrderPlace(orderId);
         res.then().statusCode(200);
         SoftAssert softAssert = new SoftAssert();
         softAssert.assertNotNull(res.jsonPath().get("message"), "Order confirmed successfully for orderId :" + orderId);
@@ -151,8 +153,9 @@ public class OrderFlow extends BaseTest {
         };
     }
 
-    @Test(dataProvider = "MedicineData", description =  " Verify placing an order with multiple medicine")
+    @Test(dataProvider = "MedicineData", description =  " Verify placing an order with multiple medicine",dependsOnMethods = "checkRewardsPostPlacement")
     public void VerifyOrderCreationMultiplemedicine(String medicinename, String medicinecode){
+        System.out.println("verifyOrderCreationForMultipleMedicines STARTED for" + medicinename);
         int newOrderid = medicinehelper.GetOrderid(
                 medicinename,
                 medicinecode,
