@@ -2,6 +2,7 @@ package Java.Base;
 
 import Java.Base.Base.BaseTest;
 import Java.Base.Config.ConfigManager;
+import Java.Base.DataProviders.MedicineDataProvider;
 import Java.Base.Helper.Customerhelper;
 import Java.Base.Helper.Medicinehelper;
 import io.restassured.response.Response;
@@ -145,15 +146,8 @@ public class OrderFlow extends BaseTest {
 
     }
 
-    @DataProvider(name = "MedicineData")
-    public Object [][] getMedicineData(){
-        return new Object[][]{
-                {"Telma 40 Tablet 15","TM-TACR1-038772"},
-                {"Ciplactin Tablet 15","TM-TACR1-008278"}
-        };
-    }
 
-    @Test(dataProvider = "MedicineData", description =  " Verify placing an order with multiple medicine",dependsOnMethods = "checkRewardsPostPlacement")
+    @Test(dataProvider = "MedicineData", description =  " Verify placing an order with multiple medicine",dependsOnMethods = "checkRewardsPostPlacement",dataProviderClass = MedicineDataProvider.class)
     public void VerifyOrderCreationMultiplemedicine(String medicinename, String medicinecode){
         System.out.println("verifyOrderCreationForMultipleMedicines STARTED for" + medicinename);
         int newOrderid = medicinehelper.GetOrderid(
