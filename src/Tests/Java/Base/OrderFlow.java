@@ -2,11 +2,13 @@ package Java.Base;
 
 import Java.Base.Base.BaseTest;
 import Java.Base.Config.ConfigManager;
+import Java.Base.DataProviders.MedicineDataProvider;
 import Java.Base.Helper.Customerhelper;
 import Java.Base.Helper.Medicinehelper;
 import io.restassured.response.Response;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
+import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 import org.testng.asserts.SoftAssert;
 import org.testng.SkipException;
@@ -65,6 +67,8 @@ public class OrderFlow extends BaseTest {
 
     @Test(description = "See if Rewards is visible in Bill details",dependsOnMethods = "applyRewardsonOrder")
     public void Rewardsverificationinbilldetails() {
+        System.out.println("Rewards verification started");
+        System.out.println(orderId);
         Response rewardsdetails = medicinehelper.getBilldetails(orderId);
         rewardsBeforePlacement = rewardsdetails.jsonPath().getDouble("responseData.tmCash");
         double sellingPrice = rewardsdetails.jsonPath().getDouble("responseData.sellingPrice");
@@ -106,7 +110,7 @@ public class OrderFlow extends BaseTest {
 
     @Test(dependsOnMethods = "reapplyRewards",alwaysRun = true)
     public void Placement() {
-        Response res = medicinehelper.OrderPlace();
+        Response res = medicinehelper.OrderPlace(orderId);
         res.then().statusCode(200);
         SoftAssert softAssert = new SoftAssert();
         softAssert.assertNotNull(res.jsonPath().get("message"), "Order confirmed successfully for orderId :" + orderId);
@@ -140,6 +144,20 @@ public class OrderFlow extends BaseTest {
 
         softAssert.assertAll();
 
+    }
+
+
+    @Test(dataProvider = "MedicineData", description =  " Verify placing an order with multiple medicine",dependsOnMethods = "checkRewardsPostPlacement",dataProviderClass = MedicineDataProvider.class)
+    public void VerifyOrderCreationMultiplemedicine(String medicinename, String medicinecode){
+        System.out.println("verifyOrderCreationForMultipleMedicines STARTED for" + medicinename);
+        int newOrderid = medicinehelper.GetOrderid(
+                medicinename,
+                medicinecode,
+                Integer.parseInt(ConfigManager.get("test.customer.id")),
+                Integer.parseInt(ConfigManager.get("default.pincode")),
+                Integer.parseInt(ConfigManager.get("default.address.id")));
+
+            Assert.assertTrue(newOrderid > 0,"Expected valid order id to be create for medicine " + medicinename);
     }
 
 }
