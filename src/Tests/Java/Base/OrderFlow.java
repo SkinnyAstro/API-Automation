@@ -5,7 +5,9 @@ import Java.Base.Config.ConfigManager;
 import Java.Base.DataProviders.MedicineDataProvider;
 import Java.Base.Helper.Customerhelper;
 import Java.Base.Helper.Medicinehelper;
+import POJO.CustomerDetailsResponse;
 import io.restassured.response.Response;
+import lombok.extern.slf4j.Slf4j;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.DataProvider;
@@ -18,6 +20,7 @@ import java.io.ObjectInputFilter;
 import static org.hamcrest.Matchers.equalTo;
 
 
+@Slf4j
 public class OrderFlow extends BaseTest {
 
     private Medicinehelper medicinehelper;
@@ -48,8 +51,8 @@ public class OrderFlow extends BaseTest {
     @Test(description = "Applying rewards on the order",dependsOnMethods = "GetOrderId")
     public void applyRewardsonOrder(){
 
-        Response customerdetails = customerhelper.getCustomerDetails();
-        tmcash = customerdetails.jsonPath().getDouble("TmCash");
+        CustomerDetailsResponse customerdetails = customerhelper.getCustomerDetails();
+        tmcash =customerdetails.getTmCash();
         System.out.println("Customer has : " + tmcash);
 
         if (tmcash <=0){
@@ -58,7 +61,7 @@ public class OrderFlow extends BaseTest {
 
         Response res = medicinehelper.applyTmcash(orderId,true);
         res.then()
-                .log().ifValidationFails()
+                .log().all()
                 .statusCode(200)
                 .body("statusCode", equalTo(200), "statusValue", equalTo("OK"))
                 .body("responseData.calculateTmRewards", equalTo(true));
@@ -66,11 +69,14 @@ public class OrderFlow extends BaseTest {
     }
 
     @Test(description = "See if Rewards is visible in Bill details",dependsOnMethods = "applyRewardsonOrder")
-    public void Rewardsverificationinbilldetails() {
+    public void Rewardsverificationinbilldetails()  {
+
         System.out.println("Rewards verification started");
         System.out.println(orderId);
+
         Response rewardsdetails = medicinehelper.getBilldetails(orderId);
         rewardsBeforePlacement = rewardsdetails.jsonPath().getDouble("responseData.tmCash");
+        System.out.println(rewardsBeforePlacement);
         double sellingPrice = rewardsdetails.jsonPath().getDouble("responseData.sellingPrice");
         double expectedrewards = sellingPrice * 0.10;
 
