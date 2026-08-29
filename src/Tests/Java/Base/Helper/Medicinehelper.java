@@ -1,6 +1,8 @@
 package Java.Base.Helper;
 
 import Java.Base.Config.ConfigManager;
+import POJO.ApplyRewardsResponse;
+import POJO.BillDetailsResponse;
 import POJO.MedicineData;
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
@@ -74,7 +76,7 @@ public class Medicinehelper {
         return orderId;
     }
 
-    public Response applyTmcash(int orderId, boolean calculateTmRewards){
+    public ApplyRewardsResponse applyTmcash(int orderId, boolean calculateTmRewards){
         return given()
                 .log().ifValidationFails()
                 .header("Authorization","Bearer "+ accesstoken)
@@ -86,7 +88,7 @@ public class Medicinehelper {
                 .post("/CustomerService/calculateTmRewards")
                 .then()
                 .log().ifValidationFails()
-                .extract().response();
+                .extract().as(ApplyRewardsResponse.class);
     }
 
     public Response  OrderPlace(int placementorderId){
@@ -138,7 +140,7 @@ public class Medicinehelper {
                 .extract().response();
     }
 
-    public Response getBilldetails(int orderId){
+    public BillDetailsResponse getBilldetails(int orderId){
         return given()
                 .log().ifValidationFails()
                 .header("Authorization","Bearer " + accesstoken)
@@ -149,7 +151,7 @@ public class Medicinehelper {
                 .then()
                 .log().ifValidationFails()
                 .statusCode(200)
-                .extract().response();
+                .extract().as(BillDetailsResponse.class);
     }
 
     public Response getOrderDetails(int orderId){
