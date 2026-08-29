@@ -5,7 +5,11 @@ import Java.Base.Config.ConfigManager;
 import Java.Base.DataProviders.MedicineDataProvider;
 import Java.Base.Helper.Customerhelper;
 import Java.Base.Helper.Medicinehelper;
+import POJO.ApplyRewardsResponse;
+import POJO.BillDetailsResponse;
+import POJO.CustomerDetailsResponse;
 import io.restassured.response.Response;
+import lombok.extern.slf4j.Slf4j;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.DataProvider;
@@ -13,9 +17,8 @@ import org.testng.annotations.Test;
 import org.testng.asserts.SoftAssert;
 import org.testng.SkipException;
 
-import java.io.ObjectInputFilter;
 
-import static org.hamcrest.Matchers.equalTo;
+
 
 
 public class OrderFlow extends BaseTest {
@@ -48,30 +51,33 @@ public class OrderFlow extends BaseTest {
     @Test(description = "Applying rewards on the order",dependsOnMethods = "GetOrderId")
     public void applyRewardsonOrder(){
 
-        Response customerdetails = customerhelper.getCustomerDetails();
-        tmcash = customerdetails.jsonPath().getDouble("TmCash");
+        CustomerDetailsResponse customerdetails = customerhelper.getCustomerDetails();
+        tmcash =customerdetails.getTmCash();
         System.out.println("Customer has : " + tmcash);
 
         if (tmcash <=0){
             throw new SkipException("Customer has no tm-cash, skipping reward related test cases");
         }
 
-        Response res = medicinehelper.applyTmcash(orderId,true);
-        res.then()
-                .log().ifValidationFails()
-                .statusCode(200)
-                .body("statusCode", equalTo(200), "statusValue", equalTo("OK"))
-                .body("responseData.calculateTmRewards", equalTo(true));
+        ApplyRewardsResponse res = medicinehelper.applyTmcash(orderId,true);
+
+                Assert.assertEquals(res.getStatusCode(),200,"Expected Status code 200");
+                Assert.assertEquals(res.getStatusValue(), "OK", "Expected status value OK");
+                Assert.assertTrue(res.getResponseData().isCalculateTmRewards(),
+                "Expected calculateTmRewards to be true");
 
     }
 
     @Test(description = "See if Rewards is visible in Bill details",dependsOnMethods = "applyRewardsonOrder")
-    public void Rewardsverificationinbilldetails() {
+    public void Rewardsverificationinbilldetails()  {
+
         System.out.println("Rewards verification started");
         System.out.println(orderId);
-        Response rewardsdetails = medicinehelper.getBilldetails(orderId);
-        rewardsBeforePlacement = rewardsdetails.jsonPath().getDouble("responseData.tmCash");
-        double sellingPrice = rewardsdetails.jsonPath().getDouble("responseData.sellingPrice");
+
+        BillDetailsResponse rewardsdetails = medicinehelper.getBilldetails(orderId);
+        rewardsBeforePlacement = rewardsdetails.getResponseData().getTmCash();
+        System.out.println(rewardsBeforePlacement);
+        double sellingPrice = rewardsdetails.getResponseData().getSellingPrice();
         double expectedrewards = sellingPrice * 0.10;
 
         SoftAssert softAssert = new SoftAssert();
@@ -84,13 +90,14 @@ public class OrderFlow extends BaseTest {
 
     @Test(description = "Removing rewards post application", dependsOnMethods = "Rewardsverificationinbilldetails")
     public void removeRewards(){
-        Response res = medicinehelper.applyTmcash(orderId,false);
-        res.then()
-                .statusCode(200)
-                .body("responseData.calculateTmRewards",equalTo(false));
+        ApplyRewardsResponse res = medicinehelper.applyTmcash(orderId,false);
+        Assert.assertEquals(res.getStatusCode(),200,"Expected Status code 200");
+        Assert.assertFalse(res.getResponseData().isCalculateTmRewards(),
+                "Expected calculateTmRewards to be false after removal");
 
-        Response billdetails = medicinehelper.getBilldetails(orderId);
-        double rewardsafterremoval = billdetails.jsonPath().getDouble("responseData.tmCash");
+
+        BillDetailsResponse billdetails = medicinehelper.getBilldetails(orderId);
+        double rewardsafterremoval = billdetails.getResponseData().getTmCash();
         Assert.assertEquals(rewardsafterremoval,0.0,0.1,"We expected rewards after removal to be 0, but we got " + rewardsafterremoval);
 
 
@@ -99,12 +106,12 @@ public class OrderFlow extends BaseTest {
     @Test(description = "Reapplying rewards after removal", dependsOnMethods = "removeRewards")
     public void reapplyRewards(){
 
-        Response res = medicinehelper.applyTmcash(orderId,true);
-        res.then()
-                .statusCode(200)
-                .body("responseData.calculateTmRewards" , equalTo(true));
-        Response rewardsdetails = medicinehelper.getBilldetails(orderId);
-        rewardsBeforePlacement = rewardsdetails.jsonPath().getDouble("responseData.tmCash");
+        ApplyRewardsResponse res = medicinehelper.applyTmcash(orderId,true);
+        Assert.assertEquals(res.getStatusCode(),200,"We expected Status code as 200");
+        Assert.assertTrue(res.getResponseData().isCalculateTmRewards(),"Expected calculateTmreward to be true after reapplying");
+
+        BillDetailsResponse rewardsdetails = medicinehelper.getBilldetails(orderId);
+        rewardsBeforePlacement = rewardsdetails.getResponseData().getTmCash();
 
     }
 

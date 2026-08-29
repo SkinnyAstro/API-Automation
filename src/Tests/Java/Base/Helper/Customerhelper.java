@@ -1,5 +1,6 @@
 package Java.Base.Helper;
 
+import POJO.CustomerDetailsResponse;
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
 
@@ -13,7 +14,7 @@ public class Customerhelper {
        this.accesstoken = accesstoken;
     }
 
-    public Response getCustomerDetails(){
+    public CustomerDetailsResponse getCustomerDetails(){
         return given()
                 .header("Authorization","Bearer " + accesstoken)
                 .contentType("application/json")
@@ -22,7 +23,7 @@ public class Customerhelper {
                 .post("/CustomerService/getCustomerDetails")
                 .then()
                 .statusCode(200)
-                .extract().response();
+                .extract().as(CustomerDetailsResponse.class);
 
     }
 
