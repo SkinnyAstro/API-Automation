@@ -20,7 +20,7 @@ import org.testng.SkipException;
 
 
 
-@Slf4j
+
 public class OrderFlow extends BaseTest {
 
     private Medicinehelper medicinehelper;
@@ -108,7 +108,7 @@ public class OrderFlow extends BaseTest {
 
         ApplyRewardsResponse res = medicinehelper.applyTmcash(orderId,true);
         Assert.assertEquals(res.getStatusCode(),200,"We expected Status code as 200");
-        Assert.assertTrue(res.getResponseData().isCalculateTmRewards(),"Expected calculateTmreward to be false after removal");
+        Assert.assertTrue(res.getResponseData().isCalculateTmRewards(),"Expected calculateTmreward to be true after reapplying");
 
         BillDetailsResponse rewardsdetails = medicinehelper.getBilldetails(orderId);
         rewardsBeforePlacement = rewardsdetails.getResponseData().getTmCash();
