@@ -1,5 +1,6 @@
 package Java.Base.Helper;
 
+import Java.Base.Base.ApiClient;
 import Java.Base.Config.ConfigManager;
 import POJO.ApplyRewardsResponse;
 import POJO.BillDetailsResponse;
@@ -13,14 +14,11 @@ import java.util.List;
 
 
 
-public class Medicinehelper {
+public class Medicinehelper extends ApiClient {
 
-    private  String accesstoken; // stores the token from test class
-
-    //int customerId;
 
     public Medicinehelper(String accesstoken){
-        this.accesstoken = accesstoken; // this.accesstoken is class variable and accesstoken is value passed from testclass
+        super(accesstoken); // this access token is called up from the ApiClient flile
     }
 
     public Response addMedicine(String medicine,
@@ -43,10 +41,7 @@ public class Medicinehelper {
         List<MedicineData> requestBody = new ArrayList<>();
         requestBody.add(data);
 
-        return given()
-                .log().ifValidationFails()
-                .header("Authorization","Bearer " + accesstoken)
-                .contentType("application/json")
+        return getRequestSpec()
                 .queryParam("customerId",customerId)
                 .queryParam("pincode",pincode)
                 .queryParam("addressId",addressId)
@@ -78,10 +73,7 @@ public class Medicinehelper {
     }
 
     public ApplyRewardsResponse applyTmcash(int orderId, boolean calculateTmRewards){
-        return given()
-                .log().ifValidationFails()
-                .header("Authorization","Bearer "+ accesstoken)
-                .contentType("application/json")
+        return getRequestSpec()
                 .queryParam("orderId",orderId)
                 .queryParam("calculateTmRewards",calculateTmRewards)
                 .queryParam("versionName","9.7.0")
@@ -97,10 +89,7 @@ public class Medicinehelper {
         requestbody.setEntityId(placementorderId);
 
 
-        return given()
-                .log().ifValidationFails()
-                .header("Authorization","Bearer " + accesstoken)
-                .contentType("application/json")
+        return getRequestSpec()
                 .queryParam("orderId",placementorderId)
                 .queryParam("paymentId", ConfigManager.get("payment.id"))
                 .queryParam("offerId",0)
@@ -123,10 +112,7 @@ public class Medicinehelper {
     public Response GetOrderStatus(int orderId){
 
         //RestAssured.basePath = "CustomerService/";
-        return given()
-                .log().ifValidationFails()
-                .header("Authorization","Bearer " + accesstoken)
-                .contentType("application/json")
+        return getRequestSpec()
                 .queryParam("orderId",orderId)
                 .when()
                 .get("CustomerService/fetchOrderStatusDetails")
@@ -137,10 +123,7 @@ public class Medicinehelper {
     }
 
     public BillDetailsResponse getBilldetails(int orderId){
-        return given()
-                .log().ifValidationFails()
-                .header("Authorization","Bearer " + accesstoken)
-                .contentType("application/json")
+        return getRequestSpec()
                 .queryParam("orderId",orderId)
                 .when()
                 .get("/CustomerService/v1/cart/calculateBillDetailsforApp")
@@ -151,10 +134,7 @@ public class Medicinehelper {
     }
 
     public Response getOrderDetails(int orderId){
-        return given()
-                .log().ifValidationFails()
-                .header("Authorization","Bearer " + accesstoken)
-                .contentType("application/json")
+        return getRequestSpec()
                 .queryParam("orderId",orderId)
                 .queryParam("customerId",ConfigManager.get("test.customer.id"))
                 .when()
