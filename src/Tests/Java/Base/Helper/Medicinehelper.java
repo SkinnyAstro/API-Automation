@@ -3,6 +3,7 @@ package Java.Base.Helper;
 import Java.Base.Config.ConfigManager;
 import POJO.ApplyRewardsResponse;
 import POJO.BillDetailsResponse;
+import POJO.ConfirmOrderRequest;
 import POJO.MedicineData;
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
@@ -92,8 +93,10 @@ public class Medicinehelper {
     }
 
     public Response  OrderPlace(int placementorderId){
+        ConfirmOrderRequest requestbody = new ConfirmOrderRequest();
+        requestbody.setEntityId(placementorderId);
 
-        //RestAssured.basePath = "CustomerService/";
+
         return given()
                 .log().ifValidationFails()
                 .header("Authorization","Bearer " + accesstoken)
@@ -109,14 +112,7 @@ public class Medicinehelper {
                 .queryParam("checkAutoConfirmEligibility",true)
                 .queryParam("pageName","order_summary")
                 .queryParam("versionName","3.0.4")
-                .body("{\n" +
-                        "    \"source\": \"WEBSITE\",\n" +
-                        "    \"version\": \"TM_WEBSITE_V_4.4.1\",\n" +
-                        "    \"type\": \"Order\",\n" +
-                        "    \"entityId\": " + placementorderId + ",\n" +
-                        "    \"accepted\": true,\n" +
-                        "    \"policy\": \"Communication policy\"\n" +
-                        "}")
+                .body(requestbody)
                 .when()
                 .post("CustomerService/v2/confirmOrder")
                 .then()
