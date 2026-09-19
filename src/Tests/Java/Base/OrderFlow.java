@@ -16,6 +16,7 @@ import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 import org.testng.asserts.SoftAssert;
 import org.testng.SkipException;
+import static org.assertj.core.api.Assertions.assertThat;
 
 
 
@@ -61,10 +62,10 @@ public class OrderFlow extends BaseTest {
 
         ApplyRewardsResponse res = medicinehelper.applyTmcash(orderId,true);
 
-                Assert.assertEquals(res.getStatusCode(),200,"Expected Status code 200");
-                Assert.assertEquals(res.getStatusValue(), "OK", "Expected status value OK");
-                Assert.assertTrue(res.getResponseData().isCalculateTmRewards(),
-                "Expected calculateTmRewards to be true");
+                assertThat(res.getStatusCode()).isEqualTo(200);
+                assertThat(res.getStatusValue()).isEqualTo("OK");
+                assertThat(res.getResponseData().isCalculateTmRewards()).isTrue();
+
 
     }
 
