@@ -10,6 +10,7 @@ import POJO.BillDetailsResponse;
 import POJO.CustomerDetailsResponse;
 import io.restassured.response.Response;
 import lombok.extern.slf4j.Slf4j;
+import org.assertj.core.api.SoftAssertions;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.DataProvider;
@@ -17,9 +18,7 @@ import org.testng.annotations.Test;
 import org.testng.asserts.SoftAssert;
 import org.testng.SkipException;
 import static org.assertj.core.api.Assertions.assertThat;
-
-
-
+import static org.assertj.core.api.Assertions.within;
 
 
 public class OrderFlow extends BaseTest {
@@ -81,25 +80,27 @@ public class OrderFlow extends BaseTest {
         double sellingPrice = rewardsdetails.getResponseData().getSellingPrice();
         double expectedrewards = sellingPrice * 0.10;
 
-        SoftAssert softAssert = new SoftAssert();
-        softAssert.assertTrue(rewardsBeforePlacement > 0);
-        softAssert.assertEquals(rewardsBeforePlacement,expectedrewards,0.01,"Expected reward should be that 10% of selling price, we expected " + expectedrewards + "but we got" + rewardsBeforePlacement);
-
-        softAssert.assertAll();
+        SoftAssertions.assertSoftly(softly ->{
+            softly.assertThat(rewardsBeforePlacement).isGreaterThan(0);
+            softly.assertThat(rewardsBeforePlacement).isCloseTo(expectedrewards,within(0.01))
+                    .withFailMessage("expected rewards to be 10% of selling price , we expected " + expectedrewards + "but we got " + rewardsBeforePlacement);
+        });
 
     }
 
     @Test(description = "Removing rewards post application", dependsOnMethods = "Rewardsverificationinbilldetails")
     public void removeRewards(){
         ApplyRewardsResponse res = medicinehelper.applyTmcash(orderId,false);
-        Assert.assertEquals(res.getStatusCode(),200,"Expected Status code 200");
-        Assert.assertFalse(res.getResponseData().isCalculateTmRewards(),
-                "Expected calculateTmRewards to be false after removal");
+
+        assertThat(res.getStatusCode()).isEqualTo(200);
+        assertThat(res.getResponseData().isCalculateTmRewards()).isFalse();
 
 
         BillDetailsResponse billdetails = medicinehelper.getBilldetails(orderId);
         double rewardsafterremoval = billdetails.getResponseData().getTmCash();
         Assert.assertEquals(rewardsafterremoval,0.0,0.1,"We expected rewards after removal to be 0, but we got " + rewardsafterremoval);
+        assertThat(rewardsafterremoval).isCloseTo(0.0,within(0.1))
+                .withFailMessage("Expected rewards after removal to be 0");
 
 
     }
@@ -108,8 +109,8 @@ public class OrderFlow extends BaseTest {
     public void reapplyRewards(){
 
         ApplyRewardsResponse res = medicinehelper.applyTmcash(orderId,true);
-        Assert.assertEquals(res.getStatusCode(),200,"We expected Status code as 200");
-        Assert.assertTrue(res.getResponseData().isCalculateTmRewards(),"Expected calculateTmreward to be true after reapplying");
+        assertThat(res.getStatusCode()).isEqualTo(200);
+        assertThat(res.getResponseData().isCalculateTmRewards()).isTrue();
 
         BillDetailsResponse rewardsdetails = medicinehelper.getBilldetails(orderId);
         rewardsBeforePlacement = rewardsdetails.getResponseData().getTmCash();
@@ -120,8 +121,7 @@ public class OrderFlow extends BaseTest {
     public void Placement() {
         Response res = medicinehelper.OrderPlace(orderId);
         res.then().statusCode(200);
-        SoftAssert softAssert = new SoftAssert();
-        softAssert.assertNotNull(res.jsonPath().get("message"), "Order confirmed successfully for orderId :" + orderId);
+        assertThat(res.jsonPath().getString("message")).isNotBlank();
 
     }
 
@@ -130,13 +130,23 @@ public class OrderFlow extends BaseTest {
     @Test(dependsOnMethods = "Placement")
     public void OrderStatusVerification() {
         Response res = medicinehelper.GetOrderStatus(orderId);
-        SoftAssert softAssert = new SoftAssert();
-        softAssert.assertNotNull(res.jsonPath().get("responseData.deliveryBy"), "Delivery date is missing");
-        softAssert.assertNotNull(res.jsonPath().get("responseData.orderStatusTitle"), "Status title is missing");
-        softAssert.assertEquals(res.jsonPath().getString("responseData.pageTitle"), "Order #" + orderId, "Page title mismatch");
-        softAssert.assertNotNull(res.jsonPath().get("responseData.deliveryDate"), "Delivery date is empty");
-        softAssert.assertNotNull(res.jsonPath().get("responseData.orderDate"), "Order date is empty");
-        softAssert.assertAll();
+        SoftAssertions.assertSoftly(softly -> {
+            softly.assertThat((Object) res.jsonPath().get("responseData.deliveryBy"))
+                    .withFailMessage("Delivery date is missing")
+                    .isNotNull();
+            softly.assertThat((Object) res.jsonPath().get("responseData.orderStatusTitle"))
+                    .withFailMessage("Status title is missing")
+                    .isNotNull();
+            softly.assertThat(res.jsonPath().getString("responseData.pageTitle"))
+                    .withFailMessage("Page title mismatch")
+                    .isEqualTo("Order #" + orderId);
+            softly.assertThat((Object) res.jsonPath().get("responseData.deliveryDate"))
+                    .withFailMessage("Delivery date is empty")
+                    .isNotNull();
+            softly.assertThat((Object) res.jsonPath().get("responseData.orderDate"))
+                    .withFailMessage("Order date is empty")
+                    .isNotNull();
+        });
 
 
     }
@@ -147,10 +157,12 @@ public class OrderFlow extends BaseTest {
         Response postplacementrewards = medicinehelper.getOrderDetails(orderId);
         double rewardsAfterPlacement = postplacementrewards.jsonPath().getDouble("finalCalcAmt.tmCash");
 
-        SoftAssert softAssert = new SoftAssert();
-        softAssert.assertEquals(rewardsBeforePlacement,rewardsAfterPlacement,0.01,"We expected rewards to be " + rewardsBeforePlacement + " but we ended up getting " + rewardsAfterPlacement);
-
-        softAssert.assertAll();
+        SoftAssertions.assertSoftly(softly -> {
+            softly.assertThat(rewardsAfterPlacement)
+                    .isCloseTo(rewardsBeforePlacement, within(0.01))
+                    .withFailMessage("Expected rewards to be %s but got %s",
+                            rewardsBeforePlacement, rewardsAfterPlacement);
+        });
 
     }
 
