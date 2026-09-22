@@ -28,7 +28,7 @@ jobs:
         # from your pom.xml <suiteXmlFiles> config. Otherwise you can do:
         # run: mvn -B clean test -DsuiteXmlFile=testng.xml
 
-      - name: Publish test report
+      - name: Publish test report (pass/fail summary on the run)
         uses: dorny/test-reporter@v1
         if: always()   # run even if tests fail, so you can see results
         with:
@@ -42,3 +42,13 @@ jobs:
         with:
           name: surefire-reports
           path: target/surefire-reports/
+
+      - name: Upload ExtentReports HTML as artifact
+        if: always()   # capture the report even if tests failed
+        uses: actions/upload-artifact@v4
+        with:
+          name: extent-report
+          path: test-output/ExtentReport/
+          # Adjust the path above if your ExtentSparkReporter/config
+          # writes the HTML somewhere else, or if it's a single file
+          # like test-output/ExtentReport/index.html
