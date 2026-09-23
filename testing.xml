@@ -3,13 +3,13 @@
 <suite name="API Automation Suite">
 
     <listeners>
-        <listener class-name="Java.base.Reporting.ExtentTestListener"/>
+        <listener class-name="base.Reporting.ExtentTestListener"/>
     </listeners>
 
     <test name="Address API Tests">
 
         <classes>
-            <class name="Java.base.OrderFlow"></class>
+            <class name="base.OrderFlow"></class>
         </classes>
 
     </test>
