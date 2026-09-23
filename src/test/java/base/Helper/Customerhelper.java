@@ -1,9 +1,7 @@
-package Java.Base.Helper;
+package base.Helper;
 
-import Java.Base.Base.ApiClient;
+import base.Base.ApiClient;
 import POJO.CustomerDetailsResponse;
-import io.restassured.RestAssured;
-import io.restassured.response.Response;
 
 import static io.restassured.RestAssured.given;
 

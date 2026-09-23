@@ -1,12 +1,11 @@
-package Java.Base.Helper;
+package base.Helper;
 
-import Java.Base.Base.ApiClient;
-import Java.Base.Config.ConfigManager;
+import base.Base.ApiClient;
+import base.Config.ConfigManager;
 import POJO.ApplyRewardsResponse;
 import POJO.BillDetailsResponse;
 import POJO.ConfirmOrderRequest;
 import POJO.MedicineData;
-import io.restassured.RestAssured;
 import io.restassured.response.Response;
 import static io.restassured.RestAssured.given;
 import java.util.ArrayList;

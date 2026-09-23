@@ -1,4 +1,4 @@
-package Java.Base.DataProviders;
+package base.DataProviders;
 
 import org.testng.annotations.DataProvider;
 

@@ -1,4 +1,4 @@
-package Java.Base.Base;
+package base.Base;
 
 import io.restassured.specification.RequestSpecification;
 

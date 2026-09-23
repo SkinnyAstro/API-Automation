@@ -1,21 +1,18 @@
-package Java.Base;
+package base;
 
-import Java.Base.Base.BaseTest;
-import Java.Base.Config.ConfigManager;
-import Java.Base.DataProviders.MedicineDataProvider;
-import Java.Base.Helper.Customerhelper;
-import Java.Base.Helper.Medicinehelper;
+import base.Base.BaseTest;
+import base.Config.ConfigManager;
+import base.DataProviders.MedicineDataProvider;
+import base.Helper.Customerhelper;
+import base.Helper.Medicinehelper;
 import POJO.ApplyRewardsResponse;
 import POJO.BillDetailsResponse;
 import POJO.CustomerDetailsResponse;
 import io.restassured.response.Response;
-import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.SoftAssertions;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
-import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
-import org.testng.asserts.SoftAssert;
 import org.testng.SkipException;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.within;

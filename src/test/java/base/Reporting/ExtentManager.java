@@ -1,4 +1,4 @@
-package Java.Base.Reporting;
+package base.Reporting;
 
 import com.aventstack.extentreports.ExtentReports;
 import com.aventstack.extentreports.reporter.ExtentSparkReporter;

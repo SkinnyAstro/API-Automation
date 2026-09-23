@@ -1,8 +1,8 @@
-package Java.Base.Base;
+package base.Base;
 
 import io.restassured.RestAssured;
 import org.testng.annotations.BeforeClass;
-import Java.Base.Config.ConfigManager;
+import base.Config.ConfigManager;
 
 public class BaseTest {
 
