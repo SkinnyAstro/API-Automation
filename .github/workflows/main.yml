@@ -22,6 +22,23 @@ jobs:
           java-version: '21'
           cache: 'maven'   # caches ~/.m2 between runs, speeds things up a lot
 
+      - name: Write config.properties from secrets
+        run: |
+          mkdir -p src/main/resources
+          cat > src/main/resources/config.properties <<EOF
+          base.url=${{ secrets.CONFIG_BASE_URL }}
+          access.token=${{ secrets.CONFIG_ACCESS_TOKEN }}
+          test.customer.id=${{ secrets.CONFIG_TEST_CUSTOMER_ID }}
+          payment.id=${{ secrets.CONFIG_PAYMENT_ID }}
+          payment.method=${{ secrets.CONFIG_PAYMENT_METHOD }}
+          payment.method.id=${{ secrets.CONFIG_PAYMENT_METHOD_ID }}
+          default.medicine.name=${{ secrets.CONFIG_DEFAULT_MEDICINE_NAME }}
+          default.product.code=${{ secrets.CONFIG_DEFAULT_PRODUCT_CODE }}
+          default.pincode=${{ secrets.CONFIG_DEFAULT_PINCODE }}
+          default.address.id=${{ secrets.CONFIG_DEFAULT_ADDRESS_ID }}
+          version.name=${{ secrets.CONFIG_VERSION_NAME }}
+          EOF
+
       - name: Run TestNG suite via Maven
         run: mvn -B clean test
         # If you invoke a specific testng.xml via surefire, this already picks it up
