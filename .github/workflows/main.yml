@@ -50,7 +50,7 @@ jobs:
         if: always()   # run even if tests fail, so you can see results
         with:
           name: TestNG Results
-          path: 'target/surefire-reports/*.xml'
+          path: 'target/surefire-reports/TEST-*.xml'
           reporter: java-junit
 
       - name: Upload surefire reports as artifact
@@ -65,7 +65,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: extent-report
-          path: test-output/ExtentReport/
-          # Adjust the path above if your ExtentSparkReporter/config
-          # writes the HTML somewhere else, or if it's a single file
-          # like test-output/ExtentReport/index.html
+          path: test-output/ExtentReport.html
