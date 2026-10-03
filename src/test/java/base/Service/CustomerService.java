@@ -1,13 +1,13 @@
-package base.Helper;
+package base.Service;
 
 import base.Base.ApiClient;
 import POJO.CustomerDetailsResponse;
 
 import static io.restassured.RestAssured.given;
 
-public class Customerhelper extends ApiClient {
+public class CustomerService extends ApiClient {
 
-    public Customerhelper(String accesstoken){
+    public CustomerService(String accesstoken){
        super(accesstoken);
     }
 

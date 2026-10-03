@@ -3,8 +3,8 @@ package base;
 import base.Base.BaseTest;
 import base.Config.ConfigManager;
 import base.DataProviders.MedicineDataProvider;
-import base.Helper.Customerhelper;
-import base.Helper.Medicinehelper;
+import base.Service.CustomerService;
+import base.Service.MedicineService;
 import POJO.ApplyRewardsResponse;
 import POJO.BillDetailsResponse;
 import POJO.CustomerDetailsResponse;
@@ -20,8 +20,8 @@ import static org.assertj.core.api.Assertions.within;
 
 public class OrderFlow extends BaseTest {
 
-    private Medicinehelper medicinehelper;
-    private Customerhelper customerhelper;
+    private MedicineService medicinehelper;
+    private CustomerService customerhelper;
 
     int orderId;
     double tmcash;
@@ -30,8 +30,8 @@ public class OrderFlow extends BaseTest {
 
     @BeforeClass(alwaysRun = true)
     public void initHelpers() {
-        customerhelper = new Customerhelper(accesstoken);
-        medicinehelper = new Medicinehelper(accesstoken);
+        customerhelper = new CustomerService(accesstoken);
+        medicinehelper = new MedicineService(accesstoken);
     }
 
     @Test(description = "Collecting the orderid")

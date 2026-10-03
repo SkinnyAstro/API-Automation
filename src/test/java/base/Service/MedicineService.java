@@ -1,4 +1,4 @@
-package base.Helper;
+package base.Service;
 
 import base.Base.ApiClient;
 import base.Config.ConfigManager;
@@ -13,10 +13,10 @@ import java.util.List;
 
 
 
-public class Medicinehelper extends ApiClient {
+public class MedicineService extends ApiClient {
 
 
-    public Medicinehelper(String accesstoken){
+    public MedicineService(String accesstoken){
         super(accesstoken); // this access token is called up from the ApiClient flile
     }
 
