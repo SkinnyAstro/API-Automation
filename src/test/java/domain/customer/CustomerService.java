@@ -1,7 +1,7 @@
-package base.Service;
+package domain.customer;
 
-import base.Base.ApiClient;
-import POJO.CustomerDetailsResponse;
+import core.ApiClient;
+import domain.customer.pojo.CustomerDetailsResponse;
 
 import static io.restassured.RestAssured.given;
 

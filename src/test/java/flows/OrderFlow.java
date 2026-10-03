@@ -1,13 +1,14 @@
-package base;
+package flows;
 
-import base.Base.BaseTest;
-import base.Config.ConfigManager;
-import base.DataProviders.MedicineDataProvider;
-import base.Service.CustomerService;
-import base.Service.MedicineService;
-import POJO.ApplyRewardsResponse;
-import POJO.BillDetailsResponse;
-import POJO.CustomerDetailsResponse;
+import core.BaseTest;
+import core.ConfigManager;
+import domain.cart.dataproviders.MedicineDataProvider;
+import domain.cart.CartService;
+import domain.customer.CustomerService;
+import domain.order.OrderService;
+import domain.cart.pojo.ApplyRewardsResponse;
+import domain.cart.pojo.BillDetailsResponse;
+import domain.customer.pojo.CustomerDetailsResponse;
 import io.restassured.response.Response;
 import org.assertj.core.api.SoftAssertions;
 import org.testng.Assert;
@@ -20,8 +21,9 @@ import static org.assertj.core.api.Assertions.within;
 
 public class OrderFlow extends BaseTest {
 
-    private MedicineService medicinehelper;
-    private CustomerService customerhelper;
+    private CartService cartService;
+    private OrderService orderService;
+    private CustomerService customerService;
 
     int orderId;
     double tmcash;
@@ -30,13 +32,14 @@ public class OrderFlow extends BaseTest {
 
     @BeforeClass(alwaysRun = true)
     public void initHelpers() {
-        customerhelper = new CustomerService(accesstoken);
-        medicinehelper = new MedicineService(accesstoken);
+        customerService = new CustomerService(accesstoken);
+        cartService = new CartService(accesstoken);
+        orderService = new OrderService(accesstoken);
     }
 
     @Test(description = "Collecting the orderid")
     public void GetOrderId() {
-        orderId = medicinehelper.GetOrderid(
+        orderId = cartService.GetOrderid(
                 ConfigManager.get("default.medicine.name"),
                 ConfigManager.get("default.product.code"),
                 Integer.parseInt(ConfigManager.get("test.customer.id")),
@@ -48,7 +51,7 @@ public class OrderFlow extends BaseTest {
     @Test(description = "Applying rewards on the order",dependsOnMethods = "GetOrderId")
     public void applyRewardsonOrder(){
 
-        CustomerDetailsResponse customerdetails = customerhelper.getCustomerDetails();
+        CustomerDetailsResponse customerdetails = customerService.getCustomerDetails();
         tmcash =customerdetails.getTmCash();
         System.out.println("Customer has : " + tmcash);
 
@@ -56,7 +59,7 @@ public class OrderFlow extends BaseTest {
             throw new SkipException("Customer has no tm-cash, skipping reward related test cases");
         }
 
-        ApplyRewardsResponse res = medicinehelper.applyTmcash(orderId,true);
+        ApplyRewardsResponse res = cartService.applyTmcash(orderId,true);
 
                 assertThat(res.getStatusCode()).isEqualTo(200);
                 assertThat(res.getStatusValue()).isEqualTo("OK");
@@ -71,7 +74,7 @@ public class OrderFlow extends BaseTest {
         System.out.println("Rewards verification started");
         System.out.println(orderId);
 
-        BillDetailsResponse rewardsdetails = medicinehelper.getBilldetails(orderId);
+        BillDetailsResponse rewardsdetails = cartService.getBilldetails(orderId);
         rewardsBeforePlacement = rewardsdetails.getResponseData().getTmCash();
         System.out.println(rewardsBeforePlacement);
         double sellingPrice = rewardsdetails.getResponseData().getSellingPrice();
@@ -87,13 +90,13 @@ public class OrderFlow extends BaseTest {
 
     @Test(description = "Removing rewards post application", dependsOnMethods = "Rewardsverificationinbilldetails")
     public void removeRewards(){
-        ApplyRewardsResponse res = medicinehelper.applyTmcash(orderId,false);
+        ApplyRewardsResponse res = cartService.applyTmcash(orderId,false);
 
         assertThat(res.getStatusCode()).isEqualTo(200);
         assertThat(res.getResponseData().isCalculateTmRewards()).isFalse();
 
 
-        BillDetailsResponse billdetails = medicinehelper.getBilldetails(orderId);
+        BillDetailsResponse billdetails = cartService.getBilldetails(orderId);
         double rewardsafterremoval = billdetails.getResponseData().getTmCash();
         Assert.assertEquals(rewardsafterremoval,0.0,0.1,"We expected rewards after removal to be 0, but we got " + rewardsafterremoval);
         assertThat(rewardsafterremoval).isCloseTo(0.0,within(0.1))
@@ -105,18 +108,18 @@ public class OrderFlow extends BaseTest {
     @Test(description = "Reapplying rewards after removal", dependsOnMethods = "removeRewards")
     public void reapplyRewards(){
 
-        ApplyRewardsResponse res = medicinehelper.applyTmcash(orderId,true);
+        ApplyRewardsResponse res = cartService.applyTmcash(orderId,true);
         assertThat(res.getStatusCode()).isEqualTo(200);
         assertThat(res.getResponseData().isCalculateTmRewards()).isTrue();
 
-        BillDetailsResponse rewardsdetails = medicinehelper.getBilldetails(orderId);
+        BillDetailsResponse rewardsdetails = cartService.getBilldetails(orderId);
         rewardsBeforePlacement = rewardsdetails.getResponseData().getTmCash();
 
     }
 
     @Test(dependsOnMethods = "reapplyRewards",alwaysRun = true)
     public void Placement() {
-        Response res = medicinehelper.OrderPlace(orderId);
+        Response res = orderService.OrderPlace(orderId);
         res.then().statusCode(200);
         assertThat(res.jsonPath().getString("message")).isNotBlank();
 
@@ -126,7 +129,7 @@ public class OrderFlow extends BaseTest {
 
     @Test(dependsOnMethods = "Placement")
     public void OrderStatusVerification() {
-        Response res = medicinehelper.GetOrderStatus(orderId);
+        Response res = orderService.GetOrderStatus(orderId);
         SoftAssertions.assertSoftly(softly -> {
             softly.assertThat((Object) res.jsonPath().get("responseData.deliveryBy"))
                     .withFailMessage("Delivery date is missing")
@@ -151,7 +154,7 @@ public class OrderFlow extends BaseTest {
     @Test(description = "Verify Rewards after placement",dependsOnMethods = {"OrderStatusVerification","Rewardsverificationinbilldetails"})
     public void checkRewardsPostPlacement (){
 
-        Response postplacementrewards = medicinehelper.getOrderDetails(orderId);
+        Response postplacementrewards = orderService.getOrderDetails(orderId);
         double rewardsAfterPlacement = postplacementrewards.jsonPath().getDouble("finalCalcAmt.tmCash");
 
         SoftAssertions.assertSoftly(softly -> {
@@ -167,7 +170,7 @@ public class OrderFlow extends BaseTest {
     @Test(dataProvider = "MedicineData", description =  " Verify placing an order with multiple medicine",dependsOnMethods = "checkRewardsPostPlacement",dataProviderClass = MedicineDataProvider.class)
     public void VerifyOrderCreationMultiplemedicine(String medicinename, String medicinecode){
         System.out.println("verifyOrderCreationForMultipleMedicines STARTED for" + medicinename);
-        int newOrderid = medicinehelper.GetOrderid(
+        int newOrderid = cartService.GetOrderid(
                 medicinename,
                 medicinecode,
                 Integer.parseInt(ConfigManager.get("test.customer.id")),

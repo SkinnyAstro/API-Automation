@@ -3,13 +3,13 @@
 <suite name="API Automation Suite">
 
     <listeners>
-        <listener class-name="base.Reporting.ExtentTestListener"/>
+        <listener class-name="core.reporting.ExtentTestListener"/>
     </listeners>
 
     <test name="Address API Tests">
 
         <classes>
-            <class name="base.OrderFlow"></class>
+            <class name="flows.OrderFlow"></class>
         </classes>
 
     </test>

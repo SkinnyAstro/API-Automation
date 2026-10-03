@@ -1,4 +1,4 @@
-package POJO;
+package domain.cart.pojo;
 
 public class MedicineData {
 

@@ -1,4 +1,4 @@
-package base.DataProviders;
+package domain.cart.dataproviders;
 
 import org.testng.annotations.DataProvider;
 

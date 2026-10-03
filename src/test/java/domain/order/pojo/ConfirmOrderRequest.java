@@ -1,4 +1,4 @@
-package POJO;
+package domain.order.pojo;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;

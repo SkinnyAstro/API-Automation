@@ -1,4 +1,4 @@
-package POJO;
+package domain.customer.pojo;
 
 public class Patientdetails {
 

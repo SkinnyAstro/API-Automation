@@ -1,8 +1,7 @@
-package base.Base;
+package core;
 
 import io.restassured.RestAssured;
 import org.testng.annotations.BeforeClass;
-import base.Config.ConfigManager;
 
 public class BaseTest {
 

@@ -1,4 +1,4 @@
-package base.Config;
+package core;
 
 import java.io.IOException;
 import java.io.InputStream;

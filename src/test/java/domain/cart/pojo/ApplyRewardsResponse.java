@@ -1,11 +1,11 @@
-package POJO;
+package domain.cart.pojo;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 
-@Data
-@JsonIgnoreProperties(ignoreUnknown = true)
-public class BillDetailsResponse {
+@Data // tells Lambork to generate getters and setters
+@JsonIgnoreProperties(ignoreUnknown = true) // basically a field in JSON is not declared the just ignore and don't throw an error
+public class ApplyRewardsResponse {
 
     private String message;
     private String statusValue;
@@ -16,14 +16,7 @@ public class BillDetailsResponse {
     @Data
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class ResponseData{
-        private int orderId;
-        private double tmCash;
-        private double sellingPrice;
-        private double payableAmt;
-        private double discount;
-        private double deliveryCharge;
-        private double mrp;
+        private boolean calculateTmRewards;
     }
-
 
 }
