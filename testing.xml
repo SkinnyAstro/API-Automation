@@ -6,10 +6,17 @@
         <listener class-name="core.reporting.ExtentTestListener"/>
     </listeners>
 
-    <test name="Address API Tests">
+    <test name="Order Flow">
 
         <classes>
             <class name="flows.OrderFlow"></class>
+        </classes>
+
+    </test>
+
+    <test name="Customer Address Tests">
+
+        <classes>
             <class name="domain.customer.tests.AddAddressTests"></class>
         </classes>
 
