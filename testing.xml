@@ -10,6 +10,7 @@
 
         <classes>
             <class name="flows.OrderFlow"></class>
+            <class name="domain.customer.tests.AddAddressTests"></class>
         </classes>
 
     </test>

@@ -84,6 +84,68 @@ public class Addaddress {
 
     private String stateName;
     private boolean recalcLocation;
+    private String receiverName;
+    private String receiverMobileNo;
+    private String receiverFirstName;
+    private String receiverLastName;
+    private Double latitude;
+    private Double longitude;
+    private String placeId;
 
+    public String getReceiverName() {
+        return receiverName;
+    }
+
+    public void setReceiverName(String receiverName) {
+        this.receiverName = receiverName;
+    }
+
+    public String getReceiverMobileNo() {
+        return receiverMobileNo;
+    }
+
+    public void setReceiverMobileNo(String receiverMobileNo) {
+        this.receiverMobileNo = receiverMobileNo;
+    }
+
+    public String getReceiverFirstName() {
+        return receiverFirstName;
+    }
+
+    public void setReceiverFirstName(String receiverFirstName) {
+        this.receiverFirstName = receiverFirstName;
+    }
+
+    public String getReceiverLastName() {
+        return receiverLastName;
+    }
+
+    public void setReceiverLastName(String receiverLastName) {
+        this.receiverLastName = receiverLastName;
+    }
+
+    public Double getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(Double latitude) {
+        this.latitude = latitude;
+    }
+
+    public Double getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(Double longitude) {
+        this.longitude = longitude;
+    }
+
+    public String getPlaceId() {
+        return placeId;
+    }
+
+    public void setPlaceId(String placeId) {
+        this.placeId = placeId;
+    }
 
 }
