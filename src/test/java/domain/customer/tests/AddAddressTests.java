@@ -61,6 +61,33 @@ public class AddAddressTests extends BaseTest {
         addressDeleted = true;
     }
 
+    @Test(description = "Trying to save an address with an Invalid pincode")
+    public void invalidPincode(){
+        Addaddress address = new Addaddress();
+        address.setAddressType("City Address");
+        address.setAddressline1("AUTOMATION-TEST");
+        address.setPincode(0);
+        address.setAddressline2("Test address");
+
+        Response res = customerService.addAddress(address);
+        res.then().statusCode(400);
+        assertThat(res.jsonPath().getString("statusValue")).isEqualTo("BAD_REQUEST");
+        assertThat(res.jsonPath().getString("message")).containsIgnoringCase("pincode");
+    }
+
+    @Test(enabled = false, description = "BUG >Backend is saving the address without the addressline 1")
+    public void emptyAddressLine1(){
+        Addaddress address = new Addaddress();
+        address.setAddressType("City Address");
+        address.setAddressline1(" ");
+        address.setPincode(421301);
+        address.setAddressline2("Test address");
+
+        Response res = customerService.addAddress(address);
+        res.then().statusCode(400);
+        assertThat(res.jsonPath().getString("statusValue")).isEqualTo("BAD_REQUEST");
+    }
+
     @AfterClass(alwaysRun = true)
     public void cleanup(){
         if (addressId > 0 && !addressDeleted) {
