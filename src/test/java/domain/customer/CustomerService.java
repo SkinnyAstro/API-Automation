@@ -42,6 +42,18 @@ public class CustomerService extends ApiClient {
                 .extract().response();
     }
 
+    public Response deleteAddress(int addressId){
+        return getRequestSpec()
+                .queryParam("addressId",addressId)
+                .queryParam("customerId",ConfigManager.get("test.customer.id"))
+                .when()
+                .post("/CustomerService/v1/deleteAddress")
+                .then()
+                .log().ifValidationFails()
+                .extract().response();
+
+    }
+
 
 
 
