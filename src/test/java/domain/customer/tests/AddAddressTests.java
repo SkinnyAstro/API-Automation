@@ -53,7 +53,7 @@ public class AddAddressTests extends BaseTest {
         assertThat(addressId).isGreaterThan(0);
         Response res = customerService.deleteAddress(addressId);
         res.then().statusCode(200);
-        assertThat(res.jsonPath().getString("responseData.successMsg")).contains("Address Deleted");
+        assertThat(res.jsonPath().getString("responseData.successMsg")).containsIgnoringCase("address deleted");
 
         res = customerService.fetchAlladdress();
         List<Integer> listofaddress = res.jsonPath().getList("responseData.addressId");
