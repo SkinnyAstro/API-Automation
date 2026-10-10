@@ -4,6 +4,7 @@ import core.BaseTest;
 import domain.customer.CustomerService;
 import domain.customer.pojo.Addaddress;
 import io.restassured.response.Response;
+import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -13,6 +14,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class AddAddressTests extends BaseTest {
     private int addressId;
+    private boolean addressDeleted;
     private CustomerService customerService;
 
     @BeforeClass(alwaysRun = true)
@@ -36,7 +38,6 @@ public class AddAddressTests extends BaseTest {
         assertThat(res.jsonPath().getString("message")).isEqualTo("Address Saved Successfully");
         assertThat(res.jsonPath().getString("responseData.successMsg")).isEqualTo("Address added!");
         assertThat(addressId).isGreaterThan(0);
-
     }
 
     @Test(description = "Added address is listed ", dependsOnMethods = "validAddress")
@@ -45,7 +46,25 @@ public class AddAddressTests extends BaseTest {
         res.then().statusCode(200);
         List<Integer> listofaddress = res.jsonPath().getList("responseData.addressId");
         assertThat(listofaddress).contains(addressId);
-
     }
 
+    @Test(description = "Deleting the added address", dependsOnMethods = "addressIsListed")
+    public void deleteAddress(){
+        assertThat(addressId).isGreaterThan(0);
+        Response res = customerService.deleteAddress(addressId);
+        res.then().statusCode(200);
+        assertThat(res.jsonPath().getString("responseData.successMsg")).contains("Address Deleted");
+
+        res = customerService.fetchAlladdress();
+        List<Integer> listofaddress = res.jsonPath().getList("responseData.addressId");
+        assertThat(listofaddress).doesNotContain(addressId);
+        addressDeleted = true;
+    }
+
+    @AfterClass(alwaysRun = true)
+    public void cleanup(){
+        if (addressId > 0 && !addressDeleted) {
+            customerService.deleteAddress(addressId);
+        }
+    }
 }
