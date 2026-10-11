@@ -88,6 +88,28 @@ public class AddAddressTests extends BaseTest {
         assertThat(res.jsonPath().getString("statusValue")).isEqualTo("BAD_REQUEST");
     }
 
+    @Test(description = "Adding an address without the authorization token is rejected")
+    public void addAddressWithoutToken(){
+        Response res = customerService.addAddressWithoutToken(buildTestAddress());
+        res.then().statusCode(401);
+    }
+
+    @Test(description = "Adding an address with an invalid token is rejected")
+    public void addAddressWithInvalidToken(){
+        CustomerService unauthorizedService = new CustomerService("invalid-token");
+        Response res = unauthorizedService.addAddress(buildTestAddress());
+        res.then().statusCode(401);
+    }
+
+    private Addaddress buildTestAddress(){
+        Addaddress address = new Addaddress();
+        address.setAddressType("City Address");
+        address.setAddressline1("AUTOMATION-TEST");
+        address.setPincode(421301);
+        address.setAddressline2("Test address");
+        return address;
+    }
+
     @AfterClass(alwaysRun = true)
     public void cleanup(){
         if (addressId > 0 && !addressDeleted) {
