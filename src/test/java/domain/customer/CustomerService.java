@@ -42,6 +42,17 @@ public class CustomerService extends ApiClient {
                 .extract().response();
     }
 
+    public Response addAddressWithoutToken(Addaddress addaddress){
+        return getRequestSpecWithoutAuth()
+                .body(addaddress)
+                .queryParam("customerId", ConfigManager.get("test.customer.id"))
+                .when()
+                .post("/CustomerService/v1/saveAddress")
+                .then()
+                .log().ifValidationFails()
+                .extract().response();
+    }
+
     public Response deleteAddress(int addressId){
         return getRequestSpec()
                 .queryParam("addressId",addressId)
