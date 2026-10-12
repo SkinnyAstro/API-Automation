@@ -2,9 +2,18 @@ package domain.customer.pojo;
 
 public class Patientdetails {
 
+    private Integer patientId;
     private int age;
     private int gender;
     private int relationId;
+
+    public Integer getPatientId() {
+        return patientId;
+    }
+
+    public void setPatientId(Integer patientId) {
+        this.patientId = patientId;
+    }
 
     public int getAge() {
         return age;
