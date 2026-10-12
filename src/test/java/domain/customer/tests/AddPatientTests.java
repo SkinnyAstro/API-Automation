@@ -73,6 +73,81 @@ public class AddPatientTests extends BaseTest {
         patientDeleted = true;
     }
 
+  
+
+    @Test(enabled = false , description = "BUG > From BE we are able to add more than 150 age and 0 and less than 0")
+    public void invalidage(){
+        Patientdetails patient = new Patientdetails();
+        patient.setRelationId(6);
+        patient.setAge(0);
+        patient.setFirstName("Guru");
+        patient.setLastName("Sartape");
+        patient.setGender(8);
+
+        Response res = customerService.addPatient(patient);
+        res.prettyPrint();
+    }
+
+    @Test(enabled = false, description = "BUG > BE accepts a patient without a first name (the app blocks it)")
+    public void addPatientWithoutFirstName(){
+        Patientdetails patient = buildTestPatient();
+        patient.setFirstName(null);
+
+        Response res = customerService.addPatient(patient);
+        deleteIfCreated(res);
+        res.then().statusCode(400);
+    }
+
+    @Test(description = "Last name is optional: adding a patient without it succeeds")
+    public void addPatientWithoutLastName(){
+        Patientdetails patient = buildTestPatient();
+        patient.setLastName(null);
+
+        Response res = customerService.addPatient(patient);
+        Integer createdId = res.jsonPath().get("responseData.patientId");
+        deleteIfCreated(res);
+        res.then().statusCode(200);
+        assertThat(createdId).isNotNull();
+    }
+
+    @Test(enabled = false, description = "BUG > BE accepts a patient without an age (the app blocks it)")
+    public void addPatientWithoutAge(){
+        Patientdetails patient = buildTestPatient();
+        patient.setAge(null);
+
+        Response res = customerService.addPatient(patient);
+        deleteIfCreated(res);
+        res.then().statusCode(400);
+    }
+
+    @Test(enabled = false, description = "BUG > BE accepts a patient without a gender (the app blocks it)")
+    public void addPatientWithoutGender(){
+        Patientdetails patient = buildTestPatient();
+        patient.setGender(null);
+
+        Response res = customerService.addPatient(patient);
+        deleteIfCreated(res);
+        res.then().statusCode(400);
+    }
+
+    private Patientdetails buildTestPatient(){
+        Patientdetails patient = new Patientdetails();
+        patient.setFirstName("AutoTest");
+        patient.setLastName("Patient");
+        patient.setAge(29);
+        patient.setGender(8);
+        patient.setRelationId(8);
+        return patient;
+    }
+
+    // If the backend wrongly accepted the request, remove the patient it created
+    private void deleteIfCreated(Response res){
+        Integer createdId = res.jsonPath().get("responseData.patientId");
+        if (createdId != null) {
+            customerService.deletePatient(createdId);
+        }
+    }
+
     @AfterClass(alwaysRun = true)
     public void cleanup(){
         if (patientId > 0 && !patientDeleted) {
