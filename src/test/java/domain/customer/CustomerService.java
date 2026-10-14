@@ -4,6 +4,7 @@ import core.ApiClient;
 import core.ConfigManager;
 import domain.customer.pojo.Addaddress;
 import domain.customer.pojo.CustomerDetailsResponse;
+import domain.customer.pojo.Patientdetails;
 import io.restassured.response.Response;
 
 public class CustomerService extends ApiClient {
@@ -65,7 +66,36 @@ public class CustomerService extends ApiClient {
 
     }
 
+    public Response getAllPatients(){
+        return getRequestSpec()
+                .queryParam("showMyself",true)
+                .when()
+                .post("/CustomerService/getAllPatient")
+                .then()
+                .log().ifValidationFails()
+                .extract().response();
+    }
 
+    public Response addPatient(Patientdetails patient){
+        return getRequestSpec()
+                .queryParam("customerId",ConfigManager.get("test.customer.id"))
+                .body(patient)
+                .when()
+                .post("/CustomerService/v1/addPatient")
+                .then()
+                .log().ifValidationFails()
+                .extract().response();
+    }
 
+    public Response deletePatient(int patientId){
+        return getRequestSpec()
+                .queryParam("patientId",patientId)
+                .queryParam("customerId",ConfigManager.get("test.customer.id"))
+                .when()
+                .post("/CustomerService/v1/deletePatient")
+                .then()
+                .log().ifValidationFails()
+                .extract().response();
+    }
 
 }

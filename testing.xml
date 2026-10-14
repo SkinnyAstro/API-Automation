@@ -22,4 +22,12 @@
 
     </test>
 
+    <test name="Customer Patient Tests">
+
+        <classes>
+            <class name="domain.customer.tests.AddPatientTests"></class>
+        </classes>
+
+    </test>
+
 </suite>
