@@ -5,7 +5,6 @@ import domain.cart.pojo.ApplyRewardsResponse;
 import domain.cart.pojo.BillDetailsResponse;
 import domain.cart.pojo.MedicineData;
 import io.restassured.response.Response;
-import static io.restassured.RestAssured.given;
 import java.util.ArrayList;
 import java.util.List;
 
