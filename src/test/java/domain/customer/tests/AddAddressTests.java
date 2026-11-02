@@ -36,7 +36,7 @@ public class AddAddressTests extends BaseTest {
 
         assertThat(res.jsonPath().getString("statusValue")).isEqualTo("OK");
         assertThat(res.jsonPath().getString("message")).isEqualTo("Address Saved Successfully");
-        assertThat(res.jsonPath().getString("responseData.successMsg")).isEqualTo("Address added!");
+        assertThat(res.jsonPath().getString("responseData.successMsg")).isEqualTo("Address Saved Successfully");
         assertThat(addressId).isGreaterThan(0);
     }
 
