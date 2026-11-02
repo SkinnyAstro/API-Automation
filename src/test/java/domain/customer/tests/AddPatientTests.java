@@ -61,6 +61,7 @@ public class AddPatientTests extends BaseTest {
       assertThat(listofPatients).contains(patientId);
     }
 
+
     @Test(description = "Deleting the added patient",dependsOnMethods = "patientisListed")
     public void deletePatient(){
         Response res = customerService.deletePatient(patientId);
@@ -130,6 +131,39 @@ public class AddPatientTests extends BaseTest {
         res.then().statusCode(400);
     }
 
+    @Test(description = "Adding a patient with an invalid token is rejected")
+    public void addPatientWithInvalidToken(){
+        Response res = invalidTokenService().addPatient(buildTestPatient());
+        deleteIfCreated(res);
+        res.then().statusCode(401);
+    }
+
+    @Test(description = "Listing patients with an invalid token is rejected")
+    public void getPatientsWithInvalidToken(){
+        Response res = invalidTokenService().getAllPatients();
+        res.then().statusCode(401);
+    }
+
+    @Test(description = "Deleting a patient with an invalid token is rejected and the patient remains")
+    public void deletePatientWithInvalidToken(){
+        Response created = customerService.addPatient(buildTestPatient());
+        created.then().statusCode(200);
+        int id = created.jsonPath().getInt("responseData.patientId");
+
+        try {
+            invalidTokenService().deletePatient(id).then().statusCode(401);
+
+            List<Integer> listofPatients = customerService.getAllPatients().jsonPath().getList("PatientList.patientId");
+            assertThat(listofPatients).contains(id);
+        } finally {
+            customerService.deletePatient(id);
+        }
+    }
+
+    private CustomerService invalidTokenService(){
+        return new CustomerService("invalid-token");
+    }
+
     private Patientdetails buildTestPatient(){
         Patientdetails patient = new Patientdetails();
         patient.setFirstName("AutoTest");
@@ -142,7 +176,12 @@ public class AddPatientTests extends BaseTest {
 
     // If the backend wrongly accepted the request, remove the patient it created
     private void deleteIfCreated(Response res){
-        Integer createdId = res.jsonPath().get("responseData.patientId");
+        Integer createdId;
+        try {
+            createdId = res.jsonPath().get("responseData.patientId");
+        } catch (Exception e) {
+            return; // rejected requests may have an empty or non-JSON body, so nothing was created
+        }
         if (createdId != null) {
             customerService.deletePatient(createdId);
         }
