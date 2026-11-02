@@ -8,6 +8,8 @@ import io.restassured.response.Response;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 
 
 public class CartService extends ApiClient {
@@ -63,7 +65,13 @@ public class CartService extends ApiClient {
 
         // Extracting the orderID from the response
 
-         int orderId = res.jsonPath().getInt("responseData.orderId");
+        res.then().statusCode(200);
+        Integer orderId = res.jsonPath().get("responseData.orderId");
+        // Only the backend's message is surfaced: the full body may hold customer data and CI logs are public
+        assertThat(orderId)
+                .as("orderId missing in saveMedsAndCreateOrder response (message: %s)",
+                        res.jsonPath().getString("message"))
+                .isNotNull();
         System.out.println("Order Id captured " + orderId);
         return orderId;
     }
