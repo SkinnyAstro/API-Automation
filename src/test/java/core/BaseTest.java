@@ -3,7 +3,9 @@ package core;
 import io.restassured.RestAssured;
 import io.restassured.config.LogConfig;
 import org.testng.annotations.BeforeClass;
+import org.testng.annotations.Listeners;
 
+@Listeners(FailedResponseLogListener.class)
 public class BaseTest {
 
     protected static String accesstoken = ConfigManager.get("access.token");
