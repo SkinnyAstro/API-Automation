@@ -1,5 +1,6 @@
 package core;
 
+import io.restassured.filter.Filter;
 import io.restassured.specification.RequestSpecification;
 
 import static io.restassured.RestAssured.given;
@@ -14,6 +15,7 @@ public class ApiClient {
         return given()
                 .header("Authorization","Bearer " + accesstoken)
                 .contentType("application/json")
+                .filter(logFailedResponses())
                 .log().ifValidationFails();
     }
 
@@ -21,6 +23,12 @@ public class ApiClient {
     protected RequestSpecification getRequestSpecWithoutAuth(){
         return given()
                 .contentType("application/json")
+                .filter(logFailedResponses())
                 .log().ifValidationFails();
+    }
+
+    // Records 4xx/5xx responses; FailedResponseLogListener prints them only if the test fails
+    private Filter logFailedResponses(){
+        return FailedResponseLog.recordingFilter();
     }
 }
